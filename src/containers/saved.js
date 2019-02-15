@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import queryString from 'query-string';
+import createRequest from '../api/request';
 
 function Saved(props) {
     const [token, setToken] = useState('');
+    const request = createRequest(fetch);
 
     useEffect(() => {
-        const qsParams = queryString.parse(props.location.search);
-        setToken(qsParams.code);
+        // fetch bearer token from cookie
+        // call reddit api with bearer token
     });
 
     return (
         <div id="saved" className="saved">
+            Saved items
         </div>
     );
 }
