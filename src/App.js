@@ -15,7 +15,7 @@ function App(props) {
                 <Route
                     exact path='/saved'
                     render={(routeProps) => (
-                        <Saved {...routeProps} name='David' />
+                        <Saved {...routeProps} createReddit={props.createReddit} />
                     )}
                 />
                 <Route component={notFoundComponent} />

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import createRequest from '../api/request';
 import queryString from 'query-string';
-import createReddit from '../api/reddit';
 
 function Saved(props) {
-    const [token, setToken] = useState('[NO TOKEN]');
+    const [token, setToken] = useState('');
     const [savedItems, setSavedItems] = useState([]);
     const request = createRequest(fetch);
 
@@ -38,7 +37,11 @@ function Saved(props) {
     }, []);
 
     useEffect(() => {
-        const reddit = createReddit(token);
+        if (!token.length) {
+            return;
+        }
+
+        const reddit = props.createReddit(token);
         fetchSavedItems(reddit);
     }, [token])
 

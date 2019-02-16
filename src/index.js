@@ -4,6 +4,6 @@ import App from './App';
 import createReddit from './api/reddit';
 
 ReactDOM.render(
-    <App />,
+    <App createReddit={createReddit} />,
     document.getElementById('root'),
 );
