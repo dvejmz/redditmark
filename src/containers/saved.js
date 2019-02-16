@@ -6,7 +6,7 @@ function Saved(props) {
     const [savedItems, setSavedItems] = useState([]);
     const { cookies, location, createReddit } = props;
 
-    async function fetchToken(code) {
+    async function requestToken(code) {
         const { body, status } = await props.request.post('http://localhost:3001/token', { code });
         const response = (status === 200 && body) ? body.token : '';
 
@@ -18,39 +18,50 @@ function Saved(props) {
         setToken(response);
     }
 
-    async function fetchSavedItems(reddit) {
+    function isValidSavedItem(item) {
+        return item.title && item.title.length
+            && item.url && item.url.length;
+    }
+
+    function mapSavedItem(item) {
+        return {
+            title: item.title,
+            url: item.url,
+        };
+    }
+
+    async function fetchSavedItems() {
+        if (!token.length) {
+            return;
+        }
+
+        const reddit = createReddit(token);
         let savedListing = [];
         try {
             savedListing = await reddit.getSavedItems();
-            const parsedSaveItems = savedListing.map((i) => {
-                return { title: i.title, url: i.url };
-            }).filter(i => i.title && i.title.length && i.url && i.url.length);
+            const parsedSaveItems = savedListing
+                .map(mapSavedItem)
+                .filter(isValidSavedItem);
             setSavedItems(parsedSaveItems);
         } catch (e) {
             return;
         }
     }
 
-    useEffect(() => {
+    async function getAccessToken() {
         const accessTokenCookie = cookies.get('access_token');
 
         if (!accessTokenCookie) {
             const qsParams = queryString.parse(location.search);
             const code = qsParams.code;
-            fetchToken(code);
+            requestToken(code);
         } else {
             setToken(accessTokenCookie);
         }
-    }, []);
+    }
 
-    useEffect(() => {
-        if (!token.length) {
-            return;
-        }
-
-        const reddit = createReddit(token);
-        fetchSavedItems(reddit);
-    }, [token])
+    useEffect(() => { getAccessToken() }, []);
+    useEffect(() => { fetchSavedItems() }, [token]);
 
     return (
         <div id="saved" className="saved">
