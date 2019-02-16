@@ -1,8 +1,17 @@
-const headers = new Headers({ 'Content-Type': 'application/json', 'Origin': 'http://localhost:3000' });
+const headers = new Headers({
+    'Content-Type': 'application/json',
+    'Origin': 'https://24gfqm09w5.execute-api.eu-west-1.amazonaws.com:443',
+});
 
 export default () => {
     async function fetchAndJson(uri, config) {
-        const response = await fetch(uri, config);
+	let response = null;
+	try {
+	    response = await fetch(uri, config);
+	} catch (e) {
+	    throw e;
+	}
+
         const { status } = response;
 
         let body;

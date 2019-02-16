@@ -1,22 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import queryString from 'query-string';
-import SavedList from '../components/SavedList';;
+import SavedList from '../components/SavedList';
+import Error from '../components/Error';
 
 function Saved(props) {
+    const [errorMessage, setErrorMessage] = useState(null);
     const [token, setToken] = useState('');
     const [savedItems, setSavedItems] = useState([]);
     const { cookies, location, createReddit } = props;
 
     async function requestToken(code) {
-        const { body, status } = await props.request.post('http://localhost:3001/token', { code });
-        const response = (status === 200 && body) ? body.token : '';
-
-        if (!response.length) {
+        const { body, status } = await props.request.post(
+            'https://24gfqm09w5.execute-api.eu-west-1.amazonaws.com/test/token',
+            { code },
+        );
+        
+        if (status !== 200 || !body) {
+            setErrorMessage('Failed to authenticate with reddit');
             return;
         }
 
-        cookies.set('access_token', response, { path: '/' });
-        setToken(response);
+        const responseStatus = body.status;
+        if (responseStatus !== 200) {
+            setErrorMessage('Failed to authenticate with reddit');
+            return;
+        }
+
+        const response = body.body;
+        const newToken = (response.token && response.token.length) ? response.token : '';
+        cookies.set('access_token', newToken, { path: '/' });
+        setToken(newToken);
+        setErrorMessage(null);
     }
 
     function isValidSavedItem(item) {
@@ -65,7 +79,10 @@ function Saved(props) {
     useEffect(() => { fetchSavedItems() }, [token]);
 
     return (
-        <SavedList items={savedItems} />
+        errorMessage ?
+            <Error message={errorMessage} />
+        :
+            <SavedList items={savedItems} />
     );
 }
 
