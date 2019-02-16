@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import queryString from 'query-string';
+import SavedList from '../components/SavedList';;
 
 function Saved(props) {
     const [token, setToken] = useState('');
@@ -64,14 +65,7 @@ function Saved(props) {
     useEffect(() => { fetchSavedItems() }, [token]);
 
     return (
-        <div id="saved" className="saved">
-            <h1>My Saved Posts</h1>
-            <ul>
-                {savedItems.map((item, idx) => (
-                    <li key={idx}><a href={item.url}>{item.title}</a></li>
-                ))}
-            </ul>
-        </div>
+        <SavedList items={savedItems} />
     );
 }
 
