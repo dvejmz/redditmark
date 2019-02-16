@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import createRequest from '../api/request';
 import queryString from 'query-string';
 
 function Saved(props) {
     const [token, setToken] = useState('');
     const [savedItems, setSavedItems] = useState([]);
-    const request = createRequest(fetch);
 
     async function fetchToken(code) {
-        const { body, status } = await request.post('http://localhost:3001/token', { code });
-        const response = body ? body.token : '[NO TOKEN]';
+        const { body, status } = await props.request.post('http://localhost:3001/token', { code });
+        const response = (status === 200 && body) ? body.token : '';
         setToken(response);
     }
 

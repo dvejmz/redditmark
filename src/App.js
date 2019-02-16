@@ -15,7 +15,11 @@ function App(props) {
                 <Route
                     exact path='/saved'
                     render={(routeProps) => (
-                        <Saved {...routeProps} createReddit={props.createReddit} />
+                        <Saved
+                            {...routeProps}
+                            createReddit={props.createReddit}
+                            request={props.request}
+                        />
                     )}
                 />
                 <Route component={notFoundComponent} />
