@@ -33,7 +33,7 @@ function SavedList(props) {
                 <Divider />
                 <List component="nav">
                     {items.map((item, idx) => (
-                        <ListItemLink href={item.url} key={idx}>
+                        <ListItemLink href={item.url} target="_blank" key={idx}>
                             <ListItemText primary={item.title} />
                         </ListItemLink>
                     ))}
