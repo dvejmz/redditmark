@@ -1,15 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import createRequest from '../api/request';
 import queryString from 'query-string';
+import createReddit from '../api/reddit';
 
 function Saved(props) {
     const [token, setToken] = useState('[NO TOKEN]');
+    const [savedItems, setSavedItems] = useState([]);
     const request = createRequest(fetch);
 
     async function fetchToken(code) {
         const { body, status } = await request.post('http://localhost:3001/token', { code });
         const response = body ? body.token : '[NO TOKEN]';
         setToken(response);
+    }
+
+    async function fetchSavedItems(reddit) {
+        let savedListing = [];
+        try {
+            savedListing = await reddit.getSavedItems();
+            const parsedSaveItems = savedListing.map((i) => {
+                return { title: i.title, url: i.url };
+            }).filter(i => i.title && i.title.length && i.url && i.url.length);
+            setSavedItems(parsedSaveItems);
+        } catch (e) {
+            console.log('ERROR: ', e.toString());
+        }
     }
 
     useEffect(() => {
@@ -22,10 +37,19 @@ function Saved(props) {
         // get bearer token from backend and store as cookie
     }, []);
 
+    useEffect(() => {
+        const reddit = createReddit(token);
+        fetchSavedItems(reddit);
+    }, [token])
+
     return (
         <div id="saved" className="saved">
             <h1>My Saved Posts</h1>
-            <p>Code: {token}</p>
+            <ul>
+                {savedItems.map((item, idx) => (
+                    <li key={idx}><a href={item.url}>{item.title}</a></li>
+                ))}
+            </ul>
         </div>
     );
 }

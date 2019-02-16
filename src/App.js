@@ -12,7 +12,12 @@ function App(props) {
         <Router>
             <Switch>
                 <Route exact path='/' component={Home} />
-                <Route exact path='/saved' component={Saved} />
+                <Route
+                    exact path='/saved'
+                    render={(routeProps) => (
+                        <Saved {...routeProps} name='David' />
+                    )}
+                />
                 <Route component={notFoundComponent} />
             </Switch>
         </Router>
