@@ -4,10 +4,17 @@ import queryString from 'query-string';
 function Saved(props) {
     const [token, setToken] = useState('');
     const [savedItems, setSavedItems] = useState([]);
+    const { cookies, location, createReddit } = props;
 
     async function fetchToken(code) {
         const { body, status } = await props.request.post('http://localhost:3001/token', { code });
         const response = (status === 200 && body) ? body.token : '';
+
+        if (!response.length) {
+            return;
+        }
+
+        cookies.set('access_token', response, { path: '/' });
         setToken(response);
     }
 
@@ -20,18 +27,20 @@ function Saved(props) {
             }).filter(i => i.title && i.title.length && i.url && i.url.length);
             setSavedItems(parsedSaveItems);
         } catch (e) {
-            console.log('ERROR: ', e.toString());
+            return;
         }
     }
 
     useEffect(() => {
-        const qsParams = queryString.parse(props.location.search);
-        const code = qsParams.code;
+        const accessTokenCookie = cookies.get('access_token');
 
-        fetchToken(code);
-
-        //cookies.set('api_bearer_token', token, { path: '/' });
-        // get bearer token from backend and store as cookie
+        if (!accessTokenCookie) {
+            const qsParams = queryString.parse(location.search);
+            const code = qsParams.code;
+            fetchToken(code);
+        } else {
+            setToken(accessTokenCookie);
+        }
     }, []);
 
     useEffect(() => {
@@ -39,7 +48,7 @@ function Saved(props) {
             return;
         }
 
-        const reddit = props.createReddit(token);
+        const reddit = createReddit(token);
         fetchSavedItems(reddit);
     }, [token])
 

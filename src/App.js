@@ -1,9 +1,11 @@
 import React from 'react';
 import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
+import { withCookies } from 'react-cookie';
 import Home from './containers/home';
 import Saved from './containers/saved';
 
 function App(props) {
+    const { cookies } = props;
     const notFoundComponent = () => (
         <p>Error</p>
     );
@@ -19,6 +21,7 @@ function App(props) {
                             {...routeProps}
                             createReddit={props.createReddit}
                             request={props.request}
+                            cookies={cookies}
                         />
                     )}
                 />
@@ -28,4 +31,4 @@ function App(props) {
     );
 }
 
-export default App;
+export default withCookies(App);
