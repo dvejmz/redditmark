@@ -27,7 +27,7 @@ const styles = theme => ({
 });
 
 function Home(props) {
-    const oauthLink = 'https://www.reddit.com/api/v1/authorize?client_id=lc3vtl-uKhFj8A&response_type=code&state=ok&redirect_uri=http://localhost:3000/saved&duration=temporary&scope=history,identity';
+    const oauthLink = 'https://www.reddit.com/api/v1/authorize?client_id=lc3vtl-uKhFj8A&response_type=code&state=ok&redirect_uri=https://redditmark.apps.sgfault.com/saved&duration=temporary&scope=history,identity';
 
     return (
         <main>
