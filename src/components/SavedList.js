@@ -30,11 +30,10 @@ function SavedList(props) {
         <div id="saved" className={props.classes.root}>
             <Paper>
                 <Typography component="h2" variant="h3" className={props.classes.heading}>My Saved Posts</Typography>
-                <Divider />
                 <List component="nav">
                     {items.map((item, idx) => (
                         <ListItemLink href={item.url} target="_blank" key={idx}>
-                            <ListItemText primary={item.title} />
+                            <ListItemText primary={item.title} secondary={item.subreddit} />
                         </ListItemLink>
                     ))}
                 </List>

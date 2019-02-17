@@ -12,7 +12,6 @@ export default (accessToken) => {
             await reddit
                 .getMe()
                 .getSavedContent()
-                .fetchAll();
         return savedContent;
     }
 

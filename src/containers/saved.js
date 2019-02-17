@@ -48,6 +48,7 @@ function Saved(props) {
         return {
             title: item.title,
             url: item.url,
+            subreddit: item.subreddit.display_name,
         };
     }
 
