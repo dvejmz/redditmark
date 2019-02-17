@@ -84,11 +84,15 @@ function Saved(props) {
     useEffect(() => { getAccessToken() }, []);
     useEffect(() => { fetchSavedItems() }, [token]);
 
+    if (errorMessage) {
+        return <Error message={errorMessage} />;
+    }
+
     return (
-        errorMessage ?
-            <Error message={errorMessage} />
-        :
+        savedItems.length > 0 ?
             <SavedList items={savedItems} />
+        :
+            <p>Loading...</p>
     );
 }
 
