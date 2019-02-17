@@ -2,7 +2,7 @@ import snoowrap from 'snoowrap';
 
 export default (accessToken) => {
     const reddit = new snoowrap({
-        userAgent: 'redditmark 0.1.0 (dev)',
+        userAgent: 'web:redditmark.apps.sgfault.com:0.2.0 (dev)',
         accessToken,
     });
     reddit.config({ requestDelay: 100 });
