@@ -28,7 +28,7 @@ function Saved(props) {
 
         const response = body.body;
         const newToken = (response.token && response.token.length) ? response.token : '';
-        cookies.set('access_token', newToken, { path: '/' });
+        cookies.set('access_token', newToken, { path: '/', maxAge: 3600 });
         setToken(newToken);
         setErrorMessage(null);
     }
