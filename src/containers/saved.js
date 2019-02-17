@@ -4,6 +4,8 @@ import queryString from 'query-string';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import ToggleButton from '@material-ui/lab/ToggleButton';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import SavedList from '../components/SavedList';
@@ -27,6 +29,7 @@ const styles = {
 function Saved(props) {
     const [errorMessage, setErrorMessage] = useState(null);
     const [token, setToken] = useState('');
+    const [activeView, setActiveView] = useState('all');
     const { cookies, location, createReddit, classes } = props;
     const { savedItems } = useMappedState(mapState);
     const dispatch = useDispatch();
@@ -98,6 +101,10 @@ function Saved(props) {
         }
     }
 
+    function handleViewChange(event, view) {
+        setActiveView(view);
+    }
+
     useEffect(() => { getAccessToken() }, []);
     useEffect(() => { fetchSavedItems() }, [token]);
 
@@ -118,8 +125,11 @@ function Saved(props) {
                             <Grid item xs={4}>
                                 <Typography component="h4" variant="h4" className={props.classes.heading}>My Saved Items</Typography>
                             </Grid>
-                            <Grid item xs={8}>
-                                <Button color="primary" size="small">All</Button><Button size="small">By Subreddit</Button>
+                            <Grid item>
+                                <ToggleButtonGroup value={activeView} exclusive onChange={handleViewChange}>
+                                    <ToggleButton value="all">All</ToggleButton>
+                                    <ToggleButton value="subreddit">By Subreddit</ToggleButton>
+                                </ToggleButtonGroup>
                             </Grid>
                         </Grid>
                     </Grid>
