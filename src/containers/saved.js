@@ -11,7 +11,6 @@ const mapState = (state) => ({
 function Saved(props) {
     const [errorMessage, setErrorMessage] = useState(null);
     const [token, setToken] = useState('');
-    //const [savedItems, setSavedItems] = useState([]);
     const { cookies, location, createReddit } = props;
     const { savedItems } = useMappedState(mapState);
     const dispatch = useDispatch();
@@ -65,7 +64,6 @@ function Saved(props) {
                 .map(mapSavedItem)
                 .filter(isValidSavedItem);
             dispatch({ type: 'ADD_SAVED_ITEMS', items: parsedSaveItems });
-            //setSavedItems(parsedSaveItems);
         } catch (e) {
             return;
         }

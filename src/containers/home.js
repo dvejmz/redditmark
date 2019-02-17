@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
@@ -27,9 +28,14 @@ const styles = theme => ({
 });
 
 function Home(props) {
+    const { cookies } = props;
+    const accessToken = cookies.get('access_token') || '';
     const oauthLink = 'https://www.reddit.com/api/v1/authorize?client_id=lc3vtl-uKhFj8A&response_type=code&state=ok&redirect_uri=https://redditmark.apps.sgfault.com/saved&duration=temporary&scope=history,identity';
 
     return (
+        <div>
+        {accessToken.length > 0 &&
+            <Redirect to='/saved' />}
         <main>
             <CssBaseline />
             <Paper>
@@ -43,6 +49,7 @@ function Home(props) {
                 </Button>
             </Paper>
         </main>
+    </div>
     );
 }
 

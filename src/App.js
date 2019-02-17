@@ -13,7 +13,15 @@ function App(props) {
     return (
         <Router>
             <Switch>
-                <Route exact path='/' component={Home} />
+                <Route
+                    exact path='/'
+                    render={routeProps => (
+                        <Home
+                            {...routeProps}
+                            cookies={cookies}
+                        />
+                    )}
+                />
                 <Route
                     exact path='/saved'
                     render={(routeProps) => (
