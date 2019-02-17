@@ -64,7 +64,7 @@ function Saved(props) {
             const parsedSaveItems = savedListing
                 .map(mapSavedItem)
                 .filter(isValidSavedItem);
-            dispatch({ type: 'ADD_SAVED_ITEMS', savedItems: parsedSaveItems });
+            dispatch({ type: 'ADD_SAVED_ITEMS', items: parsedSaveItems });
             //setSavedItems(parsedSaveItems);
         } catch (e) {
             return;
