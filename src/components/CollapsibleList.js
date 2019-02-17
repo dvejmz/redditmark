@@ -6,7 +6,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 
 function CollapsibleList(props) {
-    const { text, children } = props;
+    const { text, children, key } = props;
     const ListComponent = props.component;
     const [open, setOpen] = React.useState(false);
 
@@ -15,7 +15,7 @@ function CollapsibleList(props) {
     }
 
     return (
-        <div>
+        <div key={key}>
             <ListItem button onClick={handleClick}>
                 <ListItemText primary={text} />
                 {open ? <ExpandLess /> : <ExpandMore />}

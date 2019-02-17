@@ -3,6 +3,7 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 import queryString from 'query-string';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import Grid from '@material-ui/core/Grid';
@@ -21,15 +22,20 @@ const styles = {
         maxWidth: 800,
         margin: 'auto',
     },
-    heading: {
+    headingbar: {
         padding: '10px',
     },
+    searchfield: {
+        padding: '5px',
+    }
 };
 
 function Saved(props) {
     const [errorMessage, setErrorMessage] = useState(null);
     const [token, setToken] = useState('');
     const [activeView, setActiveView] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [displayedItems, setDisplayedItems] = useState([]);
     const { cookies, location, createReddit, classes } = props;
     const { savedItems } = useMappedState(mapState);
     const dispatch = useDispatch();
@@ -105,8 +111,28 @@ function Saved(props) {
         setActiveView(view);
     }
 
+    function handleSearchInputChange(event) {
+        setSearchTerm(event.target.value);
+    }
+
+    function handleSearchInputKeyPress(event) {
+        if (event.keyCode === 13) {
+            if (!searchTerm.length) {
+                setDisplayedItems(savedItems);
+                return;
+            }
+            let matches = displayedItems.filter(i => i.title.startsWith(searchTerm));
+            console.log(matches)
+            setDisplayedItems(matches);
+            console.log(displayedItems)
+        }
+    }
+
     useEffect(() => { getAccessToken() }, []);
     useEffect(() => { fetchSavedItems() }, [token]);
+    useEffect(() => {
+        setDisplayedItems(savedItems);
+    }, [savedItems]);
 
     if (errorMessage) {
         return <Error message={errorMessage} />;
@@ -121,7 +147,7 @@ function Saved(props) {
             <Paper>
                 <Grid container>
                     <Grid item xs={12}>
-                        <Grid container justify="flex-start" alignItems="center">
+                        <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
                             <Grid item xs={4}>
                                 <Typography component="h4" variant="h4" className={classes.heading}>My Saved Items</Typography>
                             </Grid>
@@ -131,12 +157,15 @@ function Saved(props) {
                                     <ToggleButton value="subreddit">By Subreddit</ToggleButton>
                                 </ToggleButtonGroup>
                             </Grid>
+                            <Grid item>
+                                <TextField autoFocus value={searchTerm} placeholder="Search" onChange={handleSearchInputChange} onKeyDown={handleSearchInputKeyPress} className={classes.searchfield} margin="dense" />
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
                 {activeView === 'all'
-                    ? <SavedList items={savedItems} />
-                    : <SubredditSavedList items={savedItems} />
+                    ? <SavedList items={displayedItems} />
+                    : <SubredditSavedList items={displayedItems} />
                 }
             </Paper>
         </div>
