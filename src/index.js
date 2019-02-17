@@ -1,18 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { StoreContext } from 'redux-react-hook';
 import { CookiesProvider } from 'react-cookie';
 import 'typeface-roboto';
 import App from './App';
 import createReddit from './api/reddit';
 import createRequest from './api/request';
+import { makeStore } from './Store';
 const request = createRequest();
+
+const store = makeStore();
 
 ReactDOM.render(
     <CookiesProvider>
-        <App
-            createReddit={createReddit} 
-            request={request}
-        />
+        <StoreContext.Provider value={store}>
+            <App
+                createReddit={createReddit} 
+                request={request}
+            />
+        </StoreContext.Provider>
     </CookiesProvider>,
     document.getElementById('root'),
 );
