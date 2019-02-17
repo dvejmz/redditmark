@@ -5,7 +5,6 @@ export default (accessToken) => {
         userAgent: 'web:redditmark.apps.sgfault.com:0.2.0 (dev)',
         accessToken,
     });
-    reddit.config({ requestDelay: 100 });
 
     async function getSavedItems() {
         const savedContent =

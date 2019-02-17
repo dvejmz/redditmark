@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { StoreContext } from 'redux-react-hook';
 import { CookiesProvider } from 'react-cookie';
 import 'typeface-roboto';
+import './index.scss';
 import App from './App';
 import createReddit from './api/reddit';
 import createRequest from './api/request';
