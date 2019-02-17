@@ -8,7 +8,11 @@ export default (accessToken) => {
     reddit.config({ requestDelay: 100 });
 
     async function getSavedItems() {
-        const savedContent = await reddit.getMe().getSavedContent({ limit: 10 });
+        const savedContent =
+            await reddit
+                .getMe()
+                .getSavedContent()
+                .fetchAll();
         return savedContent;
     }
 
