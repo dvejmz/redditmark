@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 import queryString from 'query-string';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
 import SavedList from '../components/SavedList';
 import Error from '../components/Error';
 
@@ -8,10 +13,21 @@ const mapState = (state) => ({
     savedItems: state.savedItems,
 });
 
+const styles = {
+    root: {
+        width: '100%',
+        maxWidth: 800,
+        margin: 'auto',
+    },
+    heading: {
+        padding: '10px',
+    },
+};
+
 function Saved(props) {
     const [errorMessage, setErrorMessage] = useState(null);
     const [token, setToken] = useState('');
-    const { cookies, location, createReddit } = props;
+    const { cookies, location, createReddit, classes } = props;
     const { savedItems } = useMappedState(mapState);
     const dispatch = useDispatch();
 
@@ -89,12 +105,29 @@ function Saved(props) {
         return <Error message={errorMessage} />;
     }
 
+    if (!savedItems.length) {
+        return <p>Loading...</p>;
+    }
+
     return (
-        savedItems.length > 0 ?
-            <SavedList items={savedItems} />
-        :
-            <p>Loading...</p>
+        <div id="saved" className={props.classes.root}>
+            <Paper>
+                <Grid container>
+                    <Grid item xs={12}>
+                        <Grid container justify="flex-start" alignItems="center">
+                            <Grid item xs={4}>
+                                <Typography component="h4" variant="h4" className={props.classes.heading}>My Saved Items</Typography>
+                            </Grid>
+                            <Grid item xs={8}>
+                                <Button color="primary" size="small">All</Button><Button size="small">By Subreddit</Button>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <SavedList items={savedItems} />
+            </Paper>
+        </div>
     );
 }
 
-export default Saved;
+export default withStyles(styles)(Saved);
