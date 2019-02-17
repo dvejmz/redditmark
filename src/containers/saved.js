@@ -3,11 +3,11 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 import queryString from 'query-string';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
+import SubredditSavedList from '../components/SubredditSavedList';
 import SavedList from '../components/SavedList';
 import Error from '../components/Error';
 
@@ -117,13 +117,13 @@ function Saved(props) {
     }
 
     return (
-        <div id="saved" className={props.classes.root}>
+        <div id="saved" className={classes.root}>
             <Paper>
                 <Grid container>
                     <Grid item xs={12}>
                         <Grid container justify="flex-start" alignItems="center">
                             <Grid item xs={4}>
-                                <Typography component="h4" variant="h4" className={props.classes.heading}>My Saved Items</Typography>
+                                <Typography component="h4" variant="h4" className={classes.heading}>My Saved Items</Typography>
                             </Grid>
                             <Grid item>
                                 <ToggleButtonGroup value={activeView} exclusive onChange={handleViewChange}>
@@ -134,7 +134,10 @@ function Saved(props) {
                         </Grid>
                     </Grid>
                 </Grid>
-                <SavedList items={savedItems} />
+                {activeView === 'all'
+                    ? <SavedList items={savedItems} />
+                    : <SubredditSavedList items={savedItems} />
+                }
             </Paper>
         </div>
     );

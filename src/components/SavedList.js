@@ -9,13 +9,13 @@ function ListItemLink(props) {
 }
 
 function SavedList(props) {
-    const { items } = props;
+    const { items, inset } = props;
 
     return (
         <List component="nav">
             {items.map((item, idx) => (
                 <ListItemLink href={item.url} target="_blank" key={idx}>
-                    <ListItemText primary={item.title} secondary={item.subreddit} />
+                    <ListItemText inset={inset} primary={item.title} secondary={item.subreddit} />
                 </ListItemLink>
             ))}
         </List>
