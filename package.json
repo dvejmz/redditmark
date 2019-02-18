@@ -8,6 +8,7 @@
     "@material-ui/lab": "^3.0.0-alpha.30",
     "alpha-sort": "^2.0.1",
     "fuse.js": "^3.4.2",
+    "immutable": "^4.0.0-rc.12",
     "node-sass": "^4.11.0",
     "query-string": "^6.2.0",
     "react": "^16.8.0",
