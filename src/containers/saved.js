@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Fuse from 'fuse.js';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 import queryString from 'query-string';
 import Paper from '@material-ui/core/Paper';
@@ -39,6 +40,9 @@ function Saved(props) {
     const { cookies, location, createReddit, classes } = props;
     const { savedItems } = useMappedState(mapState);
     const dispatch = useDispatch();
+    const fuse = new Fuse(savedItems, {
+        keys: ['title'],
+    });
 
     async function requestToken(code) {
         const { body, status } = await props.request.post(
@@ -121,10 +125,9 @@ function Saved(props) {
                 setDisplayedItems(savedItems);
                 return;
             }
-            let matches = displayedItems.filter(i => i.title.startsWith(searchTerm));
-            console.log(matches)
+
+            const matches = fuse.search(searchTerm);
             setDisplayedItems(matches);
-            console.log(displayedItems)
         }
     }
 
