@@ -142,7 +142,7 @@ function Saved(props) {
     }
 
     if (!savedItems.length) {
-        return <p>Loading...</p>;
+        return <p>Loading your saved items. This might take a while...</p>;
     }
 
     return (
