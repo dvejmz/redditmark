@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 
+import { isMobileViewport } from '../helper/window';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
@@ -30,7 +31,7 @@ const styles = theme => ({
 function Home(props) {
     const { cookies, authRedirectUrl, redditClientId } = props;
     const accessToken = cookies.get('access_token') || '';
-    const oauthLink = `https://www.reddit.com/api/v1/authorize?client_id=${redditClientId}&response_type=code&state=ok&redirect_uri=${authRedirectUrl}&duration=temporary&scope=history,identity`;
+    const oauthLink = `https://www.reddit.com/api/v1/authorize${isMobileViewport() ? '.compact' : ''}?client_id=${redditClientId}&response_type=code&state=ok&redirect_uri=${authRedirectUrl}&duration=temporary&scope=history,identity`;
 
     return (
         <div>

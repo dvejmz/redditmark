@@ -144,10 +144,8 @@ function Saved(props) {
     useEffect(() => { getAccessToken() }, []);
     useEffect(() => { fetchSavedItems() }, [token]);
     useEffect(() => {
-        setAllItems(List(savedItems))
-    }, [savedItems]);
-    useEffect(() => {
-        setItemsBySubreddit(List(savedItems))
+        setAllItems(List(savedItems));
+        setItemsBySubreddit(List(savedItems));
     }, [savedItems]);
 
     if (errorMessage) {
