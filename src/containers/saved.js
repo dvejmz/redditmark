@@ -4,7 +4,6 @@ import Fuse from 'fuse.js';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 import queryString from 'query-string';
 import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
@@ -13,6 +12,9 @@ import { withStyles } from '@material-ui/core/styles';
 import SubredditSavedList from '../components/SubredditSavedList';
 import SavedList from '../components/SavedList';
 import Error from '../components/Error';
+
+const ACTIVE_VIEW_ALL = 'all';
+const ACTIVE_VIEW_SUBREDDIT = 'subreddit';
 
 const mapState = (state) => ({
     savedItems: state.savedItems,
@@ -39,7 +41,7 @@ function Saved(props) {
     const { cookies, location, createReddit, classes, authEndpoint } = props;
     const [errorMessage, setErrorMessage] = useState(null);
     const [token, setToken] = useState('');
-    const [activeView, setActiveView] = useState('all');
+    const [activeView, setActiveView] = useState(ACTIVE_VIEW_ALL);
     const [allItems, setAllItems] = useState([]);
     const [itemsBySubreddit, setItemsBySubreddit] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -124,23 +126,23 @@ function Saved(props) {
         setSearchTerm(event.target.value);
     }
 
+    function setDisplayedItems(items) {
+        if (activeView === ACTIVE_VIEW_ALL) {
+            setAllItems(items);
+        } else {
+            setItemsBySubreddit(items);
+        }
+    }
+
     function handleSearchInputKeyPress(event) {
         if (event.keyCode === 13) {
             if (!searchTerm.length) {
-                if (activeView === 'all') {
-                    setAllItems(savedItems);
-                } else {
-                    setItemsBySubreddit(savedItems);
-                }
+                setDisplayedItems(savedItems);
                 return;
             }
 
             const matches = searcher.search(searchTerm);
-            if (activeView === 'all') {
-                setAllItems(matches);
-            } else {
-                setItemsBySubreddit(matches);
-            }
+            setDisplayedItems(matches);
         }
     }
 
@@ -167,8 +169,8 @@ function Saved(props) {
                         <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
                             <Grid item>
                                 <ToggleButtonGroup className={classes.toggleGroup} value={activeView} exclusive onChange={handleViewChange}>
-                                    <ToggleButton value="all">All</ToggleButton>
-                                    <ToggleButton value="subreddit">By Subreddit</ToggleButton>
+                                    <ToggleButton value={ACTIVE_VIEW_ALL}>All</ToggleButton>
+                                    <ToggleButton value={ACTIVE_VIEW_SUBREDDIT}>By Subreddit</ToggleButton>
                                 </ToggleButtonGroup>
                             </Grid>
                             <Grid item>
@@ -177,7 +179,7 @@ function Saved(props) {
                         </Grid>
                     </Grid>
                 </Grid>
-                {activeView === 'all'
+                {activeView === ACTIVE_VIEW_ALL
                     ? <SavedList items={allItems} />
                     : <SubredditSavedList items={itemsBySubreddit} />
                 }
