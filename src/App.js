@@ -5,7 +5,7 @@ import Home from './containers/home';
 import Saved from './containers/saved';
 
 function App(props) {
-    const { cookies } = props;
+    const { cookies, authEndpoint, authRedirectUrl, redditClientId } = props;
     const notFoundComponent = () => (
         <p>Error</p>
     );
@@ -19,6 +19,8 @@ function App(props) {
                         <Home
                             {...routeProps}
                             cookies={cookies}
+                            authRedirectUrl={authRedirectUrl}
+                            redditClientId={redditClientId}
                         />
                     )}
                 />
@@ -30,6 +32,7 @@ function App(props) {
                             createReddit={props.createReddit}
                             request={props.request}
                             cookies={cookies}
+                            authEndpoint={authEndpoint}
                         />
                     )}
                 />

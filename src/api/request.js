@@ -1,9 +1,4 @@
-const headers = new Headers({
-    'Content-Type': 'application/json',
-    'Origin': 'https://24gfqm09w5.execute-api.eu-west-1.amazonaws.com:443',
-});
-
-export default () => {
+export default (headers = {}) => {
     async function fetchAndJson(uri, config) {
 	let response = null;
 	try {
@@ -39,7 +34,7 @@ export default () => {
                 method: 'POST',
                 credentials: 'same-origin',
                 body: JSON.stringify(body),
-                headers,
+                headers: new Headers(headers),
             });
         },
     };

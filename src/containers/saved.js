@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { List } from 'immutable';
 import Fuse from 'fuse.js';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 import queryString from 'query-string';
@@ -32,21 +33,22 @@ const styles = {
 };
 
 function Saved(props) {
+    const { cookies, location, createReddit, classes, authEndpoint } = props;
     const [errorMessage, setErrorMessage] = useState(null);
     const [token, setToken] = useState('');
     const [activeView, setActiveView] = useState('all');
+    const [allItems, setAllItems] = useState([]);
+    const [itemsBySubreddit, setItemsBySubreddit] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [displayedItems, setDisplayedItems] = useState([]);
-    const { cookies, location, createReddit, classes } = props;
     const { savedItems } = useMappedState(mapState);
     const dispatch = useDispatch();
-    const fuse = new Fuse(savedItems, {
+    const searcher = new Fuse(savedItems, {
         keys: ['title'],
     });
 
     async function requestToken(code) {
         const { body, status } = await props.request.post(
-            'https://24gfqm09w5.execute-api.eu-west-1.amazonaws.com/test/token',
+            authEndpoint,
             { code },
         );
         
@@ -122,19 +124,30 @@ function Saved(props) {
     function handleSearchInputKeyPress(event) {
         if (event.keyCode === 13) {
             if (!searchTerm.length) {
-                setDisplayedItems(savedItems);
+                if (activeView === 'all') {
+                    setAllItems(savedItems);
+                } else {
+                    setItemsBySubreddit(savedItems);
+                }
                 return;
             }
 
-            const matches = fuse.search(searchTerm);
-            setDisplayedItems(matches);
+            const matches = searcher.search(searchTerm);
+            if (activeView === 'all') {
+                setAllItems(matches);
+            } else {
+                setItemsBySubreddit(matches);
+            }
         }
     }
 
     useEffect(() => { getAccessToken() }, []);
     useEffect(() => { fetchSavedItems() }, [token]);
     useEffect(() => {
-        setDisplayedItems(savedItems);
+        setAllItems(List(savedItems))
+    }, [savedItems]);
+    useEffect(() => {
+        setItemsBySubreddit(List(savedItems))
     }, [savedItems]);
 
     if (errorMessage) {
@@ -167,8 +180,8 @@ function Saved(props) {
                     </Grid>
                 </Grid>
                 {activeView === 'all'
-                    ? <SavedList items={displayedItems} />
-                    : <SubredditSavedList items={displayedItems} />
+                    ? <SavedList items={allItems} />
+                    : <SubredditSavedList items={itemsBySubreddit} />
                 }
             </Paper>
         </div>

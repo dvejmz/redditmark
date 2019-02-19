@@ -8,7 +8,13 @@ import App from './App';
 import createReddit from './api/reddit';
 import createRequest from './api/request';
 import { makeStore } from './Store';
-const request = createRequest();
+const authEndpoint = 'http://localhost:3001/token';
+const authRedirectUrl = 'http://localhost:3000/saved';
+const redditClientId = '';
+const request = createRequest({
+    'Content-Type': 'application/json',
+    'Origin': authEndpoint,
+});
 
 const store = makeStore();
 
@@ -18,6 +24,9 @@ ReactDOM.render(
             <App
                 createReddit={createReddit} 
                 request={request}
+                authEndpoint={authEndpoint}
+                authRedirectUrl={authRedirectUrl}
+                redditClientId={redditClientId}
             />
         </StoreContext.Provider>
     </CookiesProvider>,
