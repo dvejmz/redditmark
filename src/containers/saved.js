@@ -25,11 +25,14 @@ const styles = {
         margin: 'auto',
     },
     headingbar: {
-        padding: '10px',
+        padding: '10px 10px 0 20px',
     },
     searchfield: {
         padding: '5px',
-    }
+    },
+    toggleGroup: {
+        width: '167px',
+    },
 };
 
 function Saved(props) {
@@ -162,17 +165,14 @@ function Saved(props) {
                 <Grid container>
                     <Grid item xs={12}>
                         <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
-                            <Grid item xs={4}>
-                                <Typography component="h4" variant="h4" className={classes.heading}>My Saved Items</Typography>
-                            </Grid>
                             <Grid item>
-                                <ToggleButtonGroup value={activeView} exclusive onChange={handleViewChange}>
+                                <ToggleButtonGroup className={classes.toggleGroup} value={activeView} exclusive onChange={handleViewChange}>
                                     <ToggleButton value="all">All</ToggleButton>
                                     <ToggleButton value="subreddit">By Subreddit</ToggleButton>
                                 </ToggleButtonGroup>
                             </Grid>
                             <Grid item>
-                                <TextField autoFocus value={searchTerm} placeholder="Search" onChange={handleSearchInputChange} onKeyDown={handleSearchInputKeyPress} className={classes.searchfield} margin="dense" />
+                                <TextField autoFocus value={searchTerm} placeholder="Search..." onChange={handleSearchInputChange} onKeyDown={handleSearchInputKeyPress} className={classes.searchfield} margin="dense" />
                             </Grid>
                         </Grid>
                     </Grid>
