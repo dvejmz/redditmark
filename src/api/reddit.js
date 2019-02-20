@@ -7,12 +7,10 @@ export default (accessToken) => {
     });
 
     async function getSavedItems() {
-        const savedContent =
-            await reddit
-                .getMe()
-                .getSavedContent()
-                .fetchAll();
-        return savedContent;
+        return await reddit
+            .getMe()
+            .getSavedContent()
+            .fetchAll();
     }
 
     return {

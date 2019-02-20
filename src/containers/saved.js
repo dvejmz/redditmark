@@ -9,6 +9,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
+import SavedItemRepository from './data/savedItemRepository';
 import SubredditSavedList from '../components/SubredditSavedList';
 import SavedList from '../components/SavedList';
 import Error from '../components/Error';
@@ -38,7 +39,13 @@ const styles = {
 };
 
 function Saved(props) {
-    const { cookies, location, createReddit, classes, authEndpoint } = props;
+    const {
+        cookies,
+        location,
+        classes,
+        fetchToken,
+        createReddit,
+    } = props;
     const [errorMessage, setErrorMessage] = useState(null);
     const [token, setToken] = useState('');
     const [activeView, setActiveView] = useState(ACTIVE_VIEW_ALL);
@@ -51,59 +58,18 @@ function Saved(props) {
         keys: ['title'],
     });
 
-    async function requestToken(code) {
-        const { body, status } = await props.request.post(
-            authEndpoint,
-            { code },
-        );
-        
-        if (status !== 200 || !body) {
-            setErrorMessage('Failed to authenticate with reddit');
-            return;
-        }
-
-        const responseStatus = body.status;
-        if (responseStatus !== 200) {
-            setErrorMessage('Failed to authenticate with reddit');
-            return;
-        }
-
-        const response = body.body;
-        const newToken = (response.token && response.token.length) ? response.token : '';
-        cookies.set('access_token', newToken, { path: '/', maxAge: 3600 });
-        setToken(newToken);
-        setErrorMessage(null);
-    }
-
-    function isValidSavedItem(item) {
-        return item.title && item.title.length
-            && item.url && item.url.length;
-    }
-
-    function mapSavedItem(item) {
-        return {
-            title: item.title,
-            url: item.url,
-            subreddit: item.subreddit.display_name,
-        };
-    }
-
     async function fetchSavedItems() {
         if (!token.length) {
             return;
         }
 
-        const reddit = createReddit(token);
-        let savedListing = [];
-        try {
-            savedListing = await reddit.getSavedItems();
-            const parsedSaveItems = savedListing
-                .map(mapSavedItem)
-                .filter(isValidSavedItem);
-            dispatch({ type: 'ADD_SAVED_ITEMS', items: parsedSaveItems });
-        } catch (e) {
-            return;
+        const savedItemRepository = SavedItemRepository(createReddit(token));
+        const items = await savedItemRepository.getSavedItems();
+        if (!items.length) {
+            setErrorMessage('Unable to retrieve saved items');
         }
+
+        dispatch({ type: 'ADD_SAVED_ITEMS', items });
     }
 
     async function getAccessToken() {
@@ -112,7 +78,14 @@ function Saved(props) {
         if (!accessTokenCookie) {
             const qsParams = queryString.parse(location.search);
             const code = qsParams.code;
-            requestToken(code);
+            const newToken = await fetchToken(code);
+
+            if (!newToken) {
+                setErrorMessage('Failed to autenticate with reddit');
+                return;
+            }
+            setErrorMessage(null);
+            cookies.set('access_token', newToken, { path: '/', maxAge: 3600 });
         } else {
             setToken(accessTokenCookie);
         }

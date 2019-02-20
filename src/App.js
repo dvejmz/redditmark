@@ -1,11 +1,21 @@
 import React from 'react';
 import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
+import Auth from './auth';
 import Home from './containers/home';
 import Saved from './containers/saved';
 
 function App(props) {
-    const { cookies, authEndpoint, authRedirectUrl, redditClientId } = props;
+    const {
+        cookies,
+        authEndpoint,
+        authRedirectUrl,
+        redditClientId,
+        request,
+    } = props;
+
+    const auth = Auth(request, authEndpoint, cookies);
+
     const notFoundComponent = () => (
         <p>Error</p>
     );
