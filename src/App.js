@@ -1,9 +1,9 @@
 import React from 'react';
 import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
-import Auth from './auth';
 import Home from './containers/home';
 import Saved from './containers/saved';
+import Auth from './auth';
 
 function App(props) {
     const {
@@ -40,9 +40,8 @@ function App(props) {
                         <Saved
                             {...routeProps}
                             createReddit={props.createReddit}
-                            request={props.request}
                             cookies={cookies}
-                            authEndpoint={authEndpoint}
+                            fetchToken={auth.fetchToken}
                         />
                     )}
                 />

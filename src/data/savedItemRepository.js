@@ -1,6 +1,6 @@
 import mapSavedItem from './savedItemMapper';
 
-module.exports = (reddit) => {
+export default (reddit) => {
     function isValidSavedItem(item) {
         return item.title && item.title.length
             && item.url && item.url.length;

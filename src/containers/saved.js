@@ -9,7 +9,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
-import SavedItemRepository from './data/savedItemRepository';
+import SavedItemRepository from '../data/savedItemRepository';
 import SubredditSavedList from '../components/SubredditSavedList';
 import SavedList from '../components/SavedList';
 import Error from '../components/Error';
@@ -35,6 +35,7 @@ const styles = {
     },
     toggleGroup: {
         width: '167px',
+        fontSize: 'smaller',
     },
 };
 
@@ -140,13 +141,13 @@ function Saved(props) {
                 <Grid container>
                     <Grid item xs={12}>
                         <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
-                            <Grid item>
+                            <Grid xs={6} md={2} item>
                                 <ToggleButtonGroup className={classes.toggleGroup} value={activeView} exclusive onChange={handleViewChange}>
                                     <ToggleButton value={ACTIVE_VIEW_ALL}>All</ToggleButton>
                                     <ToggleButton value={ACTIVE_VIEW_SUBREDDIT}>By Subreddit</ToggleButton>
                                 </ToggleButtonGroup>
                             </Grid>
-                            <Grid item>
+                            <Grid xs={6} md={4} item>
                                 <TextField autoFocus value={searchTerm} placeholder="Search..." onChange={handleSearchInputChange} onKeyDown={handleSearchInputKeyPress} className={classes.searchfield} margin="dense" />
                             </Grid>
                         </Grid>

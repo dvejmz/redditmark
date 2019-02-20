@@ -1,21 +1,30 @@
-module.exports = (request, authEndpoint, cookies) => {
+export default (request, authEndpoint, cookies) => {
     async function fetchToken(code) {
-        const { body, status } = await request.post(
-            authEndpoint,
-            { code },
-        );
-        
+        let body;
+        let status;
+
+        try {
+            const response = await request.post(
+                authEndpoint,
+                { code },
+            );
+            body = response.body;
+            status = response.status;
+        } catch (e) {
+            return null;
+        }
+
         if (status !== 200 || !body) {
-            return 'Failed to authenticate with reddit';
+            return null;
         }
 
         const responseStatus = body.status;
         if (responseStatus !== 200) {
-            return 'Failed to authenticate with reddit';
+            return null;
         }
 
-        const response = body.body;
-        const newToken = (response.token && response.token.length) ? response.token : '';
+        const payload = body.body;
+        const newToken = (payload.token && payload.token.length) ? payload.token : '';
         return newToken;
     }
 
