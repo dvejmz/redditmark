@@ -76,10 +76,11 @@ function Saved(props) {
     async function getAccessToken() {
         const accessTokenCookie = cookies.get('access_token');
 
+        let newToken = '';
         if (!accessTokenCookie) {
             const qsParams = queryString.parse(location.search);
             const code = qsParams.code;
-            const newToken = await fetchToken(code);
+            newToken = await fetchToken(code);
 
             if (!newToken) {
                 setErrorMessage('Failed to autenticate with reddit');
@@ -87,9 +88,9 @@ function Saved(props) {
             }
             setErrorMessage(null);
             cookies.set('access_token', newToken, { path: '/', maxAge: 3600 });
-        } else {
-            setToken(accessTokenCookie);
         }
+
+        setToken(newToken);
     }
 
     function handleViewChange(event, view) {
