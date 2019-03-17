@@ -5,11 +5,11 @@ import { CookiesProvider } from 'react-cookie';
 import 'typeface-roboto';
 import './index.scss';
 import App from './App';
-import createReddit from './api/reddit';
+import SavedItemSource from './data/savedItemSource';
 import createRequest from './api/request';
 import { makeStore } from './Store';
-const authEndpoint = 'http://localhost:3001/token';
-const authRedirectUrl = 'http://localhost:3000/saved';
+const authEndpoint = '';
+const authRedirectUrl = '';
 const redditClientId = '';
 const request = createRequest({
     'Content-Type': 'application/json',
@@ -22,7 +22,8 @@ ReactDOM.render(
     <CookiesProvider>
         <StoreContext.Provider value={store}>
             <App
-                createReddit={createReddit} 
+                createReddit={SavedItemSource} 
+                createRequest={createRequest} 
                 request={request}
                 authEndpoint={authEndpoint}
                 authRedirectUrl={authRedirectUrl}

@@ -42,6 +42,7 @@ function App(props) {
                             createReddit={props.createReddit}
                             cookies={cookies}
                             fetchToken={auth.fetchToken}
+                            createRequest={props.createRequest}
                         />
                     )}
                 />

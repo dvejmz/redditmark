@@ -46,6 +46,7 @@ function Saved(props) {
         classes,
         fetchToken,
         createReddit,
+        createRequest,
     } = props;
     const [errorMessage, setErrorMessage] = useState(null);
     const [token, setToken] = useState('');
@@ -58,16 +59,20 @@ function Saved(props) {
     const searcher = new Fuse(savedItems, {
         keys: ['title'],
     });
+    const request = createRequest({
+        'Content-Type': 'application/json',
+        'Origin': 'http://localhost:3002',
+    });
 
     async function fetchSavedItems() {
-        if (!token.length) {
+        if (!token || !token.length) {
             return;
         }
 
-        const savedItemRepository = SavedItemRepository(createReddit(token));
+        const savedItemRepository = SavedItemRepository(createReddit(request, token));
         const items = await savedItemRepository.getSavedItems();
-        if (!items.length) {
-            setErrorMessage('Unable to retrieve saved items');
+        if (!items || !items.length) {
+            return;
         }
 
         dispatch({ type: 'ADD_SAVED_ITEMS', items });
@@ -88,6 +93,8 @@ function Saved(props) {
             }
             setErrorMessage(null);
             cookies.set('access_token', newToken, { path: '/', maxAge: 3600 });
+        } else {
+            newToken = accessTokenCookie;
         }
 
         setToken(newToken);

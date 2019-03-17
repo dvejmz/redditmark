@@ -1,20 +1,17 @@
 import mapSavedItem from './savedItemMapper';
 
-export default (reddit) => {
-    function isValidSavedItem(item) {
-        return item.title && item.title.length
-            && item.url && item.url.length;
-    }
-
+export default (savedItemSource) => {
     async function getSavedItems() {
         let savedListing = [];
         try {
-            savedListing = await reddit.getSavedItems();
+            savedListing = await savedItemSource.getSavedItems();
+            if (!savedListing) {
+                return [];
+            }
             return savedListing
-                .map(mapSavedItem)
-                .filter(isValidSavedItem);
+                .map(mapSavedItem);
         } catch (e) {
-            return savedListing;
+            return [];
         }
     }
 

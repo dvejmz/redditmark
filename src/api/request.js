@@ -1,4 +1,4 @@
-export default (headers = {}) => {
+export default (globalHeaders = {}) => {
     async function fetchAndJson(uri, config) {
 	let response = null;
 	try {
@@ -23,18 +23,19 @@ export default (headers = {}) => {
     }
 
     return {
-        get(uri) {
+        get(uri, headers = {}) {
             return fetchAndJson(uri, {
                 method: 'GET',
                 credentials: 'same-origin',
+                headers: new Headers({ ...globalHeaders, ...headers }),
             });
         },
-        post(uri, body) {
+        post(uri, body, headers = {}) {
             return fetchAndJson(uri, {
                 method: 'POST',
                 credentials: 'same-origin',
                 body: JSON.stringify(body),
-                headers: new Headers(headers),
+                headers: new Headers({ ...globalHeaders, ...headers }),
             });
         },
     };
