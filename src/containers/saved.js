@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { List } from 'immutable';
 import Fuse from 'fuse.js';
+import { saveAs } from 'file-saver';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 import queryString from 'query-string';
 import Paper from '@material-ui/core/Paper';
@@ -8,6 +9,9 @@ import TextField from '@material-ui/core/TextField';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import { Save } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import SavedItemRepository from '../data/savedItemRepository';
 import SubredditSavedList from '../components/SubredditSavedList';
@@ -47,6 +51,8 @@ function Saved(props) {
         fetchToken,
         createReddit,
         createRequest,
+        toCsv,
+        apiEndpoint,
     } = props;
     const [errorMessage, setErrorMessage] = useState(null);
     const [token, setToken] = useState('');
@@ -61,7 +67,7 @@ function Saved(props) {
     });
     const request = createRequest({
         'Content-Type': 'application/json',
-        'Origin': 'http://localhost:3002',
+        'Origin': apiEndpoint,
     });
 
     async function fetchSavedItems() {
@@ -69,7 +75,7 @@ function Saved(props) {
             return;
         }
 
-        const savedItemRepository = SavedItemRepository(createReddit(request, token));
+        const savedItemRepository = SavedItemRepository(createReddit(request, token, apiEndpoint));
         const items = await savedItemRepository.getSavedItems();
         if (!items || !items.length) {
             return;
@@ -128,6 +134,14 @@ function Saved(props) {
         }
     }
 
+    function handleExportButtonClick(event) {
+        const savedItemsBlob = new Blob(
+            [toCsv(savedItems, 'title,url,subreddit')],
+            { type: 'text/csv;charset=utf-8'},
+        );
+        saveAs(savedItemsBlob, 'reddit-saved-posts.csv');
+    }
+
     useEffect(() => { getAccessToken() }, []);
     useEffect(() => { fetchSavedItems() }, [token]);
     useEffect(() => {
@@ -149,15 +163,22 @@ function Saved(props) {
                 <Grid container>
                     <Grid item xs={12}>
                         <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
-                            <Grid xs={6} md={2} item>
-                                <ToggleButtonGroup className={classes.toggleGroup} value={activeView} exclusive onChange={handleViewChange}>
-                                    <ToggleButton value={ACTIVE_VIEW_ALL}>All</ToggleButton>
-                                    <ToggleButton value={ACTIVE_VIEW_SUBREDDIT}>By Subreddit</ToggleButton>
-                                </ToggleButtonGroup>
+                            <Grid xs={6} md={3} container alignItems="center">
+                                <Grid item xs={11} md={10}>
+                                    <ToggleButtonGroup className={classes.toggleGroup} value={activeView} exclusive onChange={handleViewChange}>
+                                        <ToggleButton value={ACTIVE_VIEW_ALL}>All</ToggleButton>
+                                        <ToggleButton value={ACTIVE_VIEW_SUBREDDIT}>By Subreddit</ToggleButton>
+                                    </ToggleButtonGroup>
+                                </Grid>
+                                <Grid item xs={1} md={2}>
+                                    <Tooltip title="Export to CSV">
+                                        <IconButton onClick={handleExportButtonClick}>
+                                            <Save />
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
                             </Grid>
-                            <Grid xs={6} md={4} item>
-                                <TextField autoFocus value={searchTerm} placeholder="Search..." onChange={handleSearchInputChange} onKeyDown={handleSearchInputKeyPress} className={classes.searchfield} margin="dense" />
-                            </Grid>
+                            <TextField autoFocus value={searchTerm} placeholder="Search..." onChange={handleSearchInputChange} onKeyDown={handleSearchInputKeyPress} className={classes.searchfield} margin="dense" />
                         </Grid>
                     </Grid>
                 </Grid>

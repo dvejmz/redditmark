@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
+import toCsv from './helper/csv';
 import Home from './containers/home';
 import Saved from './containers/saved';
 import Auth from './auth';
@@ -9,6 +10,7 @@ function App(props) {
     const {
         cookies,
         authEndpoint,
+        apiEndpoint,
         authRedirectUrl,
         redditClientId,
         request,
@@ -43,6 +45,8 @@ function App(props) {
                             cookies={cookies}
                             fetchToken={auth.fetchToken}
                             createRequest={props.createRequest}
+                            apiEndpoint={apiEndpoint}
+                            toCsv={toCsv}
                         />
                     )}
                 />
