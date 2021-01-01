@@ -1,5 +1,6 @@
 const createRequest = require('./request');
 const FormData = require('form-data');
+const qs = require('qs');
 const bodyParser = require('body-parser');
 
 module.exports = (
@@ -13,8 +14,8 @@ module.exports = (
     async function handleAuth(authCode) {
         if (!authCode.length) {
             return {
-                status: 400,
-                error: 'No auth code was provided',
+                statusCode: 400,
+                errorMessage: 'No auth code was provided',
             };
         }
 
@@ -30,27 +31,23 @@ module.exports = (
                 `https://www.reddit.com/api/v1/access_token`,
                 form,
                 apiClientId,
-                apiClientSecret,
+                apiClientSecret
             );
-            body = response.body;
-            status = response.status;
+            ({ body, status } = response);
         } catch (e) {
             logger.error('app.handleAuth', { message: 'Unable to fetch access token from API', error: e.toString() });
         }
 
         if (status !== 200 || !body || !body.access_token) {
             logger.error('app.handleAuth', { message: 'API refused to produce access token', authCode, error: body });
-            return {
-                status: 500,
-                error: 'API refused to produce access token',
-            };
+            throw new Error("API refused to produce access token");
         }
 
         return {
-            status: 200,
-            body: {
+            statusCode: 200,
+            body: JSON.stringify({
                 token: body.access_token,
-            },
+            })
         };
     }
 

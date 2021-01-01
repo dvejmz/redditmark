@@ -6,7 +6,6 @@ import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import * as apigw from "@aws-cdk/aws-apigateway";
 import * as apigwintegrations from "@aws-cdk/aws-apigatewayv2-integrations";
-import {Cors} from '@aws-cdk/aws-apigateway';
 
 export class RedditmarkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -21,7 +20,7 @@ export class RedditmarkStack extends cdk.Stack {
       environment: {
         API_CLIENT_ID: "lc3vtl-uKhFj8A",
         API_CLIENT_SECRET: "tf0JsPln8VDzjZaob1PBGsbMpIA",
-        CLIENT_URL: "https://8cu9zz4lt6.execute-api.eu-west-2.amazonaws.com/saved",
+        CLIENT_URL: "https://redditmark.apps.sgfault.com/saved",
       },
       bundling: {
         //minify: true,
@@ -29,7 +28,7 @@ export class RedditmarkStack extends cdk.Stack {
       },
     });
 
-    const apiGW = new HttpApi(this, "redditmark", { corsPreflight: { allowOrigins: ["*"], allowHeaders: ["*"], allowMethods: [HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS] }});
+    const apiGW = new HttpApi(this, "redditmark", { corsPreflight: { allowOrigins: ["https://redditmark.apps.sgfault.com"], allowHeaders: ["*"], allowCredentials: true, allowMethods: [HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS] }});
     apiGW.addRoutes({
       path: "/saved",
       methods: [ HttpMethod.GET ],
