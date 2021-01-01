@@ -1,0 +1,26 @@
+{
+  "name": "redditmark-api",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-serverless-express": "^3.3.5",
+    "body-parser": "^1.18.3",
+    "btoa": "^1.2.1",
+    "express": "^4.16.4",
+    "form-data": "^2.3.3",
+    "node-app-base": "git+https://github.com/infinityworks/node-app-base.git",
+    "node-fetch": "^2.3.0",
+    "snoowrap": "^1.15.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  }
+}
