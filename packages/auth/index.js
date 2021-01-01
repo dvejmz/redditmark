@@ -24,6 +24,7 @@ const App = require('./src/app')(
 );
 
 exports.handler = async (event) => {
-    const { code } = event;
+    logger.info("event", { event });
+    const { code } = JSON.parse(event.body);
     return App.handleAuth(code);
 };
