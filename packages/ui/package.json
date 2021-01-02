@@ -16,6 +16,7 @@
     "react": "^16.8.0",
     "react-cookie": "^3.0.8",
     "react-dom": "^16.8.0",
+    "react-query": "^3.5.9",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^2.1.5",
     "snoowrap": "^1.22.0",
