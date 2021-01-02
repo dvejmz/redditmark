@@ -1,13 +1,13 @@
 const createRequest = require('./request');
 const FormData = require('form-data');
 
-module.exports = (
+module.exports = ({
     logger,
+    debugEnabled = false,
     apiClientId,
     apiClientSecret,
     clientUrl,
-) => {
-    const debugEnabled = process.env.DEBUG_ENABLED || false;
+}) => {
     const request = createRequest(logger, debugEnabled);
 
     async function handleAuth(authCode) {

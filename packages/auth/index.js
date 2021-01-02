@@ -14,17 +14,29 @@ config.set({
         type: 'string',
         required: true,
     },
+    DEBUG_ENABLED: {
+        type: 'boolean',
+        default: false,
+    }
 });
 
-const App = require('./src/app')(
+const App = require('./src/app')({
     logger,
-    config.get('API_CLIENT_ID'),
-    config.get('API_CLIENT_SECRET'),
-    config.get('CLIENT_URL'),
-);
+    apiClientId: config.get('API_CLIENT_ID'),
+    apiClientSecret: config.get('API_CLIENT_SECRET'),
+    clientUrl: config.get('CLIENT_URL'),
+    debugEnabled: config.get('DEBUG_ENABLED'),
+});
 
 exports.handler = async (event) => {
+    const debugEnabled = config.get('DEBUG_ENABLED');
+
+    if (debugEnabled) {
+        logger.info('apigateway.event', { event });
+    }
+
     const { code } = JSON.parse(event.body);
+    logger.info('code', { code, eventBody: event.body });
     const res = await App.handleAuth(code);
     return {
         headers: { 'Content-Type': 'application/json' },
