@@ -1,31 +1,34 @@
 const axios = require('axios').default;
-axios.interceptors.request.use(x => {
 
-    const headers = {
-        ...x.headers.common,
-        ...x.headers[x.method],
-        ...x.headers
-    };
+module.exports = (logger, debugEnabled = false) => {
+    if (debugEnabled) {
+        axios.interceptors.request.use(x => {
 
-    ['common','get', 'post', 'head', 'put', 'patch', 'delete'].forEach(header => {
-        delete headers[header]
-    })
+            const headers = {
+                ...x.headers.common,
+                ...x.headers[x.method],
+                ...x.headers
+            };
 
-    const printable = `${new Date()} | Request: ${x.method.toUpperCase()} | ${x.url} | ${ JSON.stringify( x.data) } | ${JSON.stringify(headers)}`
-    console.log(printable)
+            ['common','get', 'post', 'head', 'put', 'patch', 'delete'].forEach(header => {
+                delete headers[header]
+            })
 
-    return x;
-})
+            const printable = `${new Date()} | Request: ${x.method.toUpperCase()} | ${x.url} | ${ JSON.stringify( x.data) } | ${JSON.stringify(headers)}`
+            logger.info(printable)
 
-axios.interceptors.response.use(x => {
+            return x;
+        })
 
-    const printable = `${new Date()} | Response: ${x.status} | ${ JSON.stringify(x.data) }`
-    console.log(printable)
+        axios.interceptors.response.use(x => {
 
-    return x;
-})
+            const printable = `${new Date()} | Response: ${x.status} | ${ JSON.stringify(x.data) }`
+            logger.info(printable)
 
-module.exports = () => {
+            return x;
+        })
+    }
+
     return {
         async postWithBasicAuth(uri, form, username, password, headers = {}) {
             let response = null;

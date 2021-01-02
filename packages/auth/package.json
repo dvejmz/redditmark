@@ -12,11 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
-    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "form-data": "^2.3.3",
-    "node-app-base": "git+https://github.com/infinityworks/node-app-base.git",
-    "qs": "^6.9.4"
+    "node-app-base": "git+https://github.com/infinityworks/node-app-base.git"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"

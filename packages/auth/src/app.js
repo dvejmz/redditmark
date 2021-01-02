@@ -1,7 +1,5 @@
 const createRequest = require('./request');
 const FormData = require('form-data');
-const qs = require('qs');
-const bodyParser = require('body-parser');
 
 module.exports = (
     logger,
@@ -9,7 +7,8 @@ module.exports = (
     apiClientSecret,
     clientUrl,
 ) => {
-    const request = createRequest();
+    const debugEnabled = process.env.DEBUG_ENABLED || false;
+    const request = createRequest(logger, debugEnabled);
 
     async function handleAuth(authCode) {
         if (!authCode.length) {
