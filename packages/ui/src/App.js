@@ -14,6 +14,7 @@ function App(props) {
         authRedirectUrl,
         redditClientId,
         request,
+        createReddit,
     } = props;
 
     const auth = Auth(request, authEndpoint, cookies);
@@ -43,6 +44,9 @@ function App(props) {
                             {...routeProps}
                             fetchToken={auth.fetchToken}
                             cookies={cookies}
+                            createReddit={createReddit}
+                            request={request}
+                            apiEndpoint={apiEndpoint}
                         />
                     )}
                 />

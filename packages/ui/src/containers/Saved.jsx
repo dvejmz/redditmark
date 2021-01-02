@@ -2,14 +2,16 @@ import React from 'react';
 import queryString from 'query-string';
 
 import Saved from '../components/Saved';
+import SavedItemRepository from '../data/savedItemRepository';
 
-const SavedPage = (props) => {
-    const {
-        location,
-        fetchToken,
-        cookies,
-    } = props;
-
+const SavedPage = ({
+    location,
+    fetchToken,
+    cookies,
+    createReddit,
+    request,
+    apiEndpoint,
+}) => {
     const getAccessToken = async () => {
         const accessTokenCookie = cookies.get('access_token');
 
@@ -28,12 +30,29 @@ const SavedPage = (props) => {
         }
 
         return newToken;
+    };
+
+    const fetchSavedItems = async (token) => {
+        if (!token || !token.length) {
+            throw new Error('Invalid token');
+        }
+
+        const redditClient = createReddit(request, token, apiEndpoint);
+        const savedItemRepository = SavedItemRepository(redditClient);
+        const items = await savedItemRepository.getSavedItems();
+        if (!items || !items.length) {
+            return [];
+        }
+
+        return items;
     }
+
 
     return (
         <Saved
             location={location}
             getAccessToken={getAccessToken}
+            fetchSavedItems={fetchSavedItems}
         />
     )
 };
