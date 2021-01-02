@@ -16,10 +16,7 @@ const authEndpoint = `${apiBase}/token`;
 //const authEndpoint = 'http://localhost:3001/token';
 const authRedirectUrl = 'http://localhost:3000/saved';
 const redditClientId = 'lc3vtl-uKhFj8A';
-const request = createRequest({
-    'Content-Type': 'application/json',
-    'Origin': authEndpoint,
-});
+const request = createRequest();
 
 const queryClient = new QueryClient();
 
@@ -28,7 +25,6 @@ ReactDOM.render(
         <QueryClientProvider client={queryClient}>
             <App
                 createReddit={SavedItemSource} 
-                createRequest={createRequest} 
                 request={request}
                 authEndpoint={authEndpoint}
                 apiEndpoint={apiEndpoint}

@@ -10,7 +10,7 @@ const Saved = ({ getAccessToken }) => {
     const { isLoading, isError, error, data: token } = useQuery('token', getAccessToken);
 
     if (isError) {
-        return <Error message={error.message} />;
+        return (<div><Error message={error.message} /></div>);
     }
 
     return (

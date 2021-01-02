@@ -1,9 +1,9 @@
 import React from 'react';
 import queryString from 'query-string';
 
-import SavedComponent from '../components/Saved';
+import Saved from '../components/Saved';
 
-const Saved = (props) => {
+const SavedPage = (props) => {
     const {
         location,
         fetchToken,
@@ -31,11 +31,11 @@ const Saved = (props) => {
     }
 
     return (
-        <SavedComponent
+        <Saved
             location={location}
             getAccessToken={getAccessToken}
         />
     )
 };
 
-export default Saved;
+export default SavedPage;
