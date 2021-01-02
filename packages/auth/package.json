@@ -11,12 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "btoa": "^1.2.1",
+    "axios": "^0.21.1",
     "express": "^4.16.4",
     "form-data": "^2.3.3",
-    "node-app-base": "git+https://github.com/infinityworks/node-app-base.git",
-    "node-fetch": "^2.3.0"
+    "node-app-base": "git+https://github.com/infinityworks/node-app-base.git"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"

@@ -18,13 +18,7 @@ export default (request, authEndpoint, cookies) => {
             return null;
         }
 
-        const responseStatus = body.status;
-        if (responseStatus !== 200) {
-            return null;
-        }
-
-        const payload = body.body;
-        const newToken = (payload.token && payload.token.length) ? payload.token : '';
+        const newToken = (body.token && body.token.length) ? body.token : '';
         return newToken;
     }
 

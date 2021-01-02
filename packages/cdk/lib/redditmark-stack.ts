@@ -4,9 +4,7 @@ import * as s3deployment from '@aws-cdk/aws-s3-deployment';
 import * as cloudfront from '@aws-cdk/aws-cloudfront';
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
-import * as apigw from "@aws-cdk/aws-apigateway";
 import * as apigwintegrations from "@aws-cdk/aws-apigatewayv2-integrations";
-import {Cors} from '@aws-cdk/aws-apigateway';
 
 export class RedditmarkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -14,6 +12,7 @@ export class RedditmarkStack extends cdk.Stack {
 
     const apiLambda = new NodejsFunction(this, "api", {
       entry: `${__dirname}/../../api/index.js`,
+      timeout: cdk.Duration.seconds(60),
     });
 
     const authLambda = new NodejsFunction(this, "auth", {
@@ -21,15 +20,22 @@ export class RedditmarkStack extends cdk.Stack {
       environment: {
         API_CLIENT_ID: "lc3vtl-uKhFj8A",
         API_CLIENT_SECRET: "tf0JsPln8VDzjZaob1PBGsbMpIA",
-        CLIENT_URL: "https://8cu9zz4lt6.execute-api.eu-west-2.amazonaws.com/saved",
+        CLIENT_URL: "https://redditmark.apps.sgfault.com/saved",
       },
       bundling: {
-        //minify: true,
+        minify: true,
         sourceMap: true,
       },
     });
 
-    const apiGW = new HttpApi(this, "redditmark", { corsPreflight: { allowOrigins: ["*"], allowHeaders: ["*"], allowMethods: [HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS] }});
+    const apiGW = new HttpApi(this, "redditmark", {
+      corsPreflight: {
+        allowOrigins: ["https://redditmark.apps.sgfault.com"],
+        allowHeaders: ["*"],
+        allowCredentials: true,
+        allowMethods: [HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS]
+      },
+    });
     apiGW.addRoutes({
       path: "/saved",
       methods: [ HttpMethod.GET ],
@@ -44,20 +50,6 @@ export class RedditmarkStack extends cdk.Stack {
         handler: authLambda,
       })
     });
-    //apiGW.addRoutes({
-    //  path: "/token",
-    //  methods: [ HttpMethod.OPTIONS ],
-    //  integration: new apigw.MockIntegration({
-    //      integrationResponses: [{
-    //        statusCode: '200',
-    //      }],
-    //      passthroughBehavior: apigw.PassthroughBehavior.NEVER,
-    //      requestTemplates: {
-    //        'application/json': '{ "statusCode": 200 }',
-    //      },
-    //    }),
-    //  methodResponses: [{ statusCode: '200' }],
-    //});
 
     const uiDistribution = cloudfront.Distribution.fromDistributionAttributes(this, "uiDistribution", {
       distributionId: "E1HD4MZC3HCKSK",

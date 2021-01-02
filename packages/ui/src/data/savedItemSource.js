@@ -4,7 +4,6 @@ export default function (request, authToken, endpoint) {
     async function getSavedItems() {
         const tokenHash = md5(authToken);
         let body = null;
-        let status = null;
         try {
             const response = await request.get(
                 `${endpoint}?uid=${tokenHash}`,
