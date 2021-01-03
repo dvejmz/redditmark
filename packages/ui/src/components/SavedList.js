@@ -8,7 +8,7 @@ function ListItemLink(props) {
     return <ListItem button component="a" {...props} />;
 }
 
-function SavedList(props) {
+const SavedList = React.memo(props => {
     const { items, inset } = props;
 
     return (
@@ -20,6 +20,6 @@ function SavedList(props) {
             ))}
         </List>
     );
-};
+});
 
 export default SavedList;

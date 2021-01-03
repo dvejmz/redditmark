@@ -48,6 +48,7 @@ const Saved = ({
         error,
         data: allItems
     } = useQuery('savedItems', () => fetchSavedItems(token), { enabled: !!token });
+
     const searcher = new Fuse(allItems, {
         keys: ['title'],
     });
@@ -67,7 +68,7 @@ const Saved = ({
                     return initialSearchState;
                 }
 
-                const searchResult = searcher.search(query);
+                const searchResult = searcher.search(query).map(r => r.item);
                 return {
                     ...state,
                     query,
@@ -80,9 +81,16 @@ const Saved = ({
         }
     };
 
+    let onQueryChangeTimeout = null;
     const onQueryChange = (value) => {
+        if (onQueryChangeTimeout) {
+            clearTimeout(onQueryChangeTimeout);
+        }
+        
         searchDispatch({ type: UPDATE_QUERY, query: value });
-        searchDispatch({ type: PERFORM_SEARCH });
+        onQueryChangeTimeout = setTimeout(() => {
+            searchDispatch({ type: PERFORM_SEARCH });
+        }, 250);
     }
 
     const [searchState, searchDispatch] = useReducer(
