@@ -1,43 +1,82 @@
-export default (globalHeaders = {}) => {
-    async function fetchAndJson(uri, config) {
-	let response = null;
-	try {
-	    response = await fetch(uri, config);
-	} catch (e) {
-	    throw e;
-	}
+const axios = require('axios').default;
 
-        const { status } = response;
+export default ({ debugEnabled = false } = {}) => {
+    if (debugEnabled) {
+        axios.interceptors.request.use(x => {
 
-        let body;
-        try {
-            body = await response.json();
-        } catch (err) {
-            return {
-                status,
-                message: 'invalid json response from server',
+            const headers = {
+                ...x.headers.common,
+                ...x.headers[x.method],
+                ...x.headers
             };
-        }
 
-        return { body, status };
+            ['common','get', 'post', 'head', 'put', 'patch', 'delete'].forEach(header => {
+                delete headers[header]
+            })
+
+            const printable = `${new Date()} | Request: ${x.method.toUpperCase()} | ${x.url} | ${ JSON.stringify( x.data) } | ${JSON.stringify(headers)}`
+            console.log(printable)
+
+            return x;
+        })
+
+        axios.interceptors.response.use(x => {
+
+            const printable = `${new Date()} | Response: ${x.status} | ${ JSON.stringify(x.data) }`
+            console.log(printable)
+
+            return x;
+        })
     }
 
     return {
-        get(uri, headers = {}) {
-            return fetchAndJson(uri, {
-                method: 'GET',
-                credentials: 'same-origin',
-                headers: new Headers({ ...globalHeaders, ...headers }),
-            });
+        async postWithBasicAuth(uri, form, username, password, headers = {}) {
+            let response = null;
+
+            try {
+                response = await axios.post(uri, form, {
+                    headers: { ...form.getHeaders(), ...headers },
+                    withCredentials: true,
+                    auth: {
+                        username,
+                        password,
+                    },
+                });
+            } catch (err) {
+                return {
+                    status: 500,
+                    error: err.message,
+                }
+            }
+
+
+            const { status, data: body } = response;
+             
+            return {
+                status,
+                body
+            }
         },
-        post(uri, body, headers = {}) {
-            return fetchAndJson(uri, {
-                method: 'POST',
-                credentials: 'same-origin',
-                body: JSON.stringify(body),
-                headers: new Headers({ ...globalHeaders, ...headers }),
-            });
+        async get(uri, headers = {}) {
+            try {
+                const { data, status } = await axios.get(uri, { headers });
+                return { body: data, status };
+            } catch (err) {
+                throw new Error(err.message);
+            }
+        },
+        async post(uri, body, headers = {}) {
+            try {
+                const { data, status } = await axios.post(uri, body, {
+                    headers: {
+                        'content-type': 'text/plain;charset=UTF-8',
+                        ...headers,
+                    },
+                });
+                return { body: data, status };
+            } catch (err) {
+                throw new Error(err.message);
+            }
         },
     };
 };
-

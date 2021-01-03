@@ -15,7 +15,7 @@ module.exports = (logger, debugEnabled = false) => {
             })
 
             const printable = `${new Date()} | Request: ${x.method.toUpperCase()} | ${x.url} | ${ JSON.stringify( x.data) } | ${JSON.stringify(headers)}`
-            logger.info(printable)
+            logger.info('request', { request: printable });
 
             return x;
         })
@@ -23,7 +23,7 @@ module.exports = (logger, debugEnabled = false) => {
         axios.interceptors.response.use(x => {
 
             const printable = `${new Date()} | Response: ${x.status} | ${ JSON.stringify(x.data) }`
-            logger.info(printable)
+            logger.info('response', { response: printable });
 
             return x;
         })

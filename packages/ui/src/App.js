@@ -3,7 +3,7 @@ import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
 import toCsv from './helper/csv';
 import Home from './containers/home';
-import Saved from './containers/saved';
+import Saved from './containers/Saved';
 import Auth from './auth';
 
 function App(props) {
@@ -14,6 +14,7 @@ function App(props) {
         authRedirectUrl,
         redditClientId,
         request,
+        createReddit,
     } = props;
 
     const auth = Auth(request, authEndpoint, cookies);
@@ -41,12 +42,11 @@ function App(props) {
                     render={(routeProps) => (
                         <Saved
                             {...routeProps}
-                            createReddit={props.createReddit}
-                            cookies={cookies}
                             fetchToken={auth.fetchToken}
-                            createRequest={props.createRequest}
+                            cookies={cookies}
+                            createReddit={createReddit}
+                            request={request}
                             apiEndpoint={apiEndpoint}
-                            toCsv={toCsv}
                         />
                     )}
                 />
