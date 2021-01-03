@@ -6,15 +6,19 @@ module.exports = (reddit) => {
             && item.url && item.url.length;
     }
 
-    async function getSavedItems() {
+    async function getSavedItems(afterIndex) {
         let savedListing = [];
         try {
-            savedListing = await reddit.getSavedItems();
-            return savedListing
+            const result = await reddit.getSavedItems({ after: afterIndex });
+            savedListing = result.items
                 .map(mapSavedItem)
                 .filter(isValidSavedItem);
+            return {
+                data: savedListing,
+                next: result.next,
+            };
         } catch (e) {
-            return savedListing;
+            throw new Error('Failed to retrieve saved items: ', e.message);
         }
     }
 

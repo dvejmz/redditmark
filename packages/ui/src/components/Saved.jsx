@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 import Fuse from 'fuse.js';
 import {
    useQuery,
+   useInfiniteQuery,
  } from 'react-query';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
@@ -45,10 +46,25 @@ const Saved = ({
         isLoading,
         isIdle,
         isError,
+        hasNextPage,
+        isFetchingNextPage,
+        fetchNextPage,
         error,
-        data: allItems
-    } = useQuery('savedItems', () => fetchSavedItems(token), { enabled: !!token });
+        data: dataPages = { pages: [] },
+    } = useInfiniteQuery(
+            'savedItems',
+            ({ pageParam = '' }) => fetchSavedItems({ token, pageParam }),
+            {
+                enabled: !!token,
+                getNextPageParam: lastPage => lastPage.next,
+            }
+        );
 
+    const shouldFetchNextPage = hasNextPage && !isFetchingNextPage;
+    if (shouldFetchNextPage) {
+        fetchNextPage();
+    }
+    const allItems = dataPages.pages.reduce((acc, p, _) => { return [...acc, ...p.items]; }, []);
     const searcher = new Fuse(allItems, {
         keys: ['title'],
     });

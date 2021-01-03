@@ -32,19 +32,24 @@ const SavedPage = ({
         return newToken;
     };
 
-    const fetchSavedItems = async (token) => {
+    const fetchSavedItems = async ({ token, pageParam = '' }) => {
         if (!token || !token.length) {
             throw new Error('Invalid token');
         }
 
         const redditClient = createReddit(request, token, apiEndpoint);
         const savedItemRepository = SavedItemRepository(redditClient);
-        const items = await savedItemRepository.getSavedItems();
-        if (!items || !items.length) {
-            return [];
+        const { data, next } = await savedItemRepository.getSavedItems(pageParam);
+        if (!data || !data.length) {
+            return {
+                items: [],
+            };
         }
 
-        return items;
+        return {
+            items: data,
+            next: next === '' ? undefined: next,
+        };
     }
 
 

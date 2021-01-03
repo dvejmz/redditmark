@@ -1,9 +1,9 @@
 import SavedItem from './savedItem';
 
-export default function map(data) {
+export default function map({ title, url, subreddit }) {
     return new SavedItem(
-        data.title,
-        data.url,
-        data.subreddit,
+        title,
+        url,
+        subreddit,
     );
 };

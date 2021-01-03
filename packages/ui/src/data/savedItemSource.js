@@ -1,18 +1,16 @@
-const md5 = require('md5');
-
 export default function (request, authToken, endpoint) {
-    async function getSavedItems() {
-        const tokenHash = md5(authToken);
-        let body = null;
+    async function getSavedItems(afterIndex = '') {
         try {
             const response = await request.get(
-                `${endpoint}?uid=${tokenHash}`,
+                `${endpoint}`,
                 {
                     'Authorization': `Bearer ${authToken}`,
                 },
+                {
+                    idx: afterIndex,
+                }
             );
-            body = response.body;
-            return body;
+            return response.body;
         } catch (e) {
             return null;
         }
