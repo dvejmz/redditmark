@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-
+import React, { useReducer } from 'react';
+import Fuse from 'fuse.js';
 import {
    useQuery,
  } from 'react-query';
@@ -12,7 +12,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Save } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-
 
 import SavedList from '../components/SavedList';
 import Error from '../components/Error';
@@ -49,6 +48,50 @@ const Saved = ({
         error,
         data: allItems
     } = useQuery('savedItems', () => fetchSavedItems(token), { enabled: !!token });
+    const searcher = new Fuse(allItems, {
+        keys: ['title'],
+    });
+
+    const searchReducer = (state, action) => {
+        switch (action.type) {
+            case UPDATE_QUERY:
+                return {
+                    ...state,
+                    query: action.query,
+                    searchActive: true,
+                };
+            case PERFORM_SEARCH: {
+                const { query } = state;
+
+                if (query === '') {
+                    return initialSearchState;
+                }
+
+                const searchResult = searcher.search(query);
+                return {
+                    ...state,
+                    query,
+                    searchResult,
+                    searchActive: true,
+                };
+            };
+            default:
+                return state;
+        }
+    };
+
+    const onQueryChange = (value) => {
+        searchDispatch({ type: UPDATE_QUERY, query: value });
+        searchDispatch({ type: PERFORM_SEARCH });
+    }
+
+    const [searchState, searchDispatch] = useReducer(
+        searchReducer,
+        initialSearchState
+    )
+
+    const { query, searchResult, searchActive } = searchState;
+    const displayedItems = searchActive ? searchResult : allItems;
 
     if (isError) {
         return (<div><Error message={error.message} /></div>);
@@ -61,13 +104,36 @@ const Saved = ({
                 'Loading...'
                 : (
                     <div>
-                        <SavedList items={allItems} />
+                        <Grid container>
+                            <Grid item xs={12}>
+                                <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
+                                    <TextField
+                                        autoFocus
+                                        value={query}
+                                        placeholder="Search..."
+                                        onChange={({ target: { value } }) => onQueryChange(value)}
+                                        className={classes.searchfield}
+                                        margin="dense"
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <SavedList items={displayedItems} />
                     </div>
                 )
             }
             </Paper>
         </div>
     );
+};
+
+const UPDATE_QUERY = 'UPDATE_QUERY';
+const PERFORM_SEARCH = 'PERFORM_SEARCH';
+
+const initialSearchState = {
+  query: '',
+  searchActive: false,
+  searchResult: []
 };
 
 export default withStyles(styles)(Saved);
