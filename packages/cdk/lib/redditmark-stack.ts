@@ -13,6 +13,9 @@ export class RedditmarkStack extends cdk.Stack {
     const apiLambda = new NodejsFunction(this, "api", {
       entry: `${__dirname}/../../api/index.js`,
       timeout: cdk.Duration.seconds(60),
+      environment: {
+        DEBUG_ENABLED: "true",
+      },
     });
 
     const authLambda = new NodejsFunction(this, "auth", {
