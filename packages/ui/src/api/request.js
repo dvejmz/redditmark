@@ -57,9 +57,9 @@ export default ({ debugEnabled = false } = {}) => {
                 body
             }
         },
-        async get(uri, headers = {}) {
+        async get(uri, headers = {}, params = {}) {
             try {
-                const { data, status } = await axios.get(uri, { headers });
+                const { data, status } = await axios.get(uri, { headers, params });
                 return { body: data, status };
             } catch (err) {
                 throw new Error(err.message);

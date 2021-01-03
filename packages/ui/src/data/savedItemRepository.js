@@ -1,17 +1,22 @@
 import mapSavedItem from './savedItemMapper';
 
 export default (savedItemSource) => {
-    async function getSavedItems() {
-        let savedListing = [];
+    async function getSavedItems(afterIndex) {
         try {
-            savedListing = await savedItemSource.getSavedItems();
-            if (!savedListing) {
-                return [];
+            const response = await savedItemSource.getSavedItems(afterIndex);
+            const { data, next } = response;
+            if (!data) {
+                return {
+                    data: [],
+                    next: '',
+                };
             }
-            return savedListing
-                .map(mapSavedItem);
+            return {
+                data: data.map(mapSavedItem),
+                next,
+            };
         } catch (e) {
-            return [];
+            throw new Error('Failed to fetch saved items');
         }
     }
 
