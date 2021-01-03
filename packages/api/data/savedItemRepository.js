@@ -9,7 +9,7 @@ module.exports = (reddit) => {
     async function getSavedItems(afterIndex) {
         let savedListing = [];
         try {
-            const result = await reddit.getSavedItems({ after: afterIndex });
+            const result = await reddit.getSavedItems({ limit: 100, after: afterIndex });
             savedListing = result.items
                 .map(mapSavedItem)
                 .filter(isValidSavedItem);

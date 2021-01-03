@@ -11,6 +11,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
 import { Save } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -47,6 +48,7 @@ const Saved = ({
         isIdle,
         isError,
         hasNextPage,
+        isFetching,
         isFetchingNextPage,
         fetchNextPage,
         error,
@@ -56,6 +58,9 @@ const Saved = ({
             ({ pageParam = '' }) => fetchSavedItems({ token, pageParam }),
             {
                 enabled: !!token,
+                staleTime: Infinity,
+                refetchOnReconnect: false,
+                refetchOnWindowFocus: false,
                 getNextPageParam: lastPage => lastPage.next,
             }
         );
@@ -106,7 +111,7 @@ const Saved = ({
         searchDispatch({ type: UPDATE_QUERY, query: value });
         onQueryChangeTimeout = setTimeout(() => {
             searchDispatch({ type: PERFORM_SEARCH });
-        }, 250);
+        }, 100);
     }
 
     const [searchState, searchDispatch] = useReducer(
@@ -118,14 +123,16 @@ const Saved = ({
     const displayedItems = searchActive ? searchResult : allItems;
 
     if (isError) {
-        return (<div><Error message={error.message} /></div>);
+        return (<Error message={error.message} />);
     }
+
+    const isFirstLoad = isIdle || isLoading;
 
     return (
         <div id="saved" className={classes.root}>
             <Paper>
-            {isIdle || isLoading ?
-                'Loading...'
+            {isFirstLoad
+                ? (<Typography>Loading...</Typography>)
                 : (
                     <div>
                         <Grid container>
@@ -139,6 +146,11 @@ const Saved = ({
                                         className={classes.searchfield}
                                         margin="dense"
                                     />
+                                    {isFetching && (
+                                        <Typography>
+                                            Syncing list...
+                                        </Typography>
+                                    )}
                                 </Grid>
                             </Grid>
                         </Grid>
