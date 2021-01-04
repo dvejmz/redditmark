@@ -24,6 +24,9 @@ export class RedditmarkStack extends cdk.Stack {
       debugEnabled = false,
     } = props;
 
+    const isDev = stage === 'dev';
+    const isProd = stage === 'prod';
+
     const apiClientId = ssm.StringParameter.valueForStringParameter(
         this, `/redditmark/${stage}/api-client/id`);
     const apiClientSecret = ssm.StringParameter.valueForStringParameter(
@@ -37,7 +40,13 @@ export class RedditmarkStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(60),
       environment: {
         DEBUG_ENABLED: debugEnabled.toString(),
+        NODE_ENV: isDev ? 'development' : 'production',
       },
+      memorySize: isProd ? 256 : undefined,
+      bundling: isProd ? {
+        minify: true,
+        sourceMap: true,
+      } : {},
     });
 
     const authLambda = new NodejsFunction(this, "auth", {
@@ -47,10 +56,10 @@ export class RedditmarkStack extends cdk.Stack {
         API_CLIENT_SECRET: apiClientSecret,
         CLIENT_URL: apiClientCallbackUrl,
       },
-      bundling: {
+      bundling: isProd ? {
         minify: true,
         sourceMap: true,
-      },
+      } : {},
     });
 
     const apiGW = new HttpApi(this, `redditmark-${stage}`, {
