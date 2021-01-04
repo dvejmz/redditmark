@@ -10,35 +10,37 @@ import TextField from '@material-ui/core/TextField';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 import { Save } from '@material-ui/icons';
-import { withStyles } from '@material-ui/core/styles';
+import { fade, withStyles } from '@material-ui/core/styles';
 
 import SavedList from '../components/SavedList';
 import toCsv from '../helper/csv';
 import SubredditSavedList from '../components/SubredditSavedList';
 import Error from '../components/Error';
 
-const styles = {
+const styles = theme => ({
     root: {
         width: '100%',
         maxWidth: 800,
         margin: 'auto',
     },
-    headingbar: {
-        padding: '10px 10px 0 20px',
-    },
     searchfield: {
-        padding: '5px',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: fade(theme.palette.common.white, 0.70),
+            '&:hover': {
+                backgroundColor: fade(theme.palette.common.white, 1.0),
+        },
     },
     toggleGroup: {
-        width: '167px',
+        backgroundColor: 'white',
         fontSize: 'smaller',
     },
-};
+});
 
 const Saved = ({
     classes,
@@ -56,7 +58,6 @@ const Saved = ({
         isIdle,
         isError,
         hasNextPage,
-        isFetching,
         isFetchingNextPage,
         fetchNextPage,
         error,
@@ -115,7 +116,7 @@ const Saved = ({
         if (onQueryChangeTimeout) {
             clearTimeout(onQueryChangeTimeout);
         }
-        
+
         searchDispatch({ type: UPDATE_QUERY, query: value });
         onQueryChangeTimeout = setTimeout(() => {
             searchDispatch({ type: PERFORM_SEARCH });
@@ -131,7 +132,6 @@ const Saved = ({
     const displayedItems = searchActive ? searchResult : allItems;
 
     const onExportButtonClick = () => {
-        console.log(toCsv)
         const savedItemsBlob = new Blob(
             [toCsv(allItems, 'title,url,subreddit')],
             { type: 'text/csv;charset=utf-8'},
@@ -150,52 +150,40 @@ const Saved = ({
     return (
         <div id="saved" className={classes.root}>
             <Paper>
-                <Box p={2}>
                     {isFirstLoad
                         ? (
-                            <Box>
+                            <Box p={2}>
                                 <Typography>Loading...</Typography>
                             </Box>
                         )
                         : (
                             <div>
-                                <Grid container>
-                                    <Grid item xs={12}>
-                                        <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
-                                            <Grid xs={6} md={3} container item alignItems="center">
-                                                <Grid item xs={11} md={10}>
-                                                    <ToggleButtonGroup className={classes.toggleGroup} value={activeView} exclusive onChange={(_, view) => setActiveView(view)}>
-                                                        <ToggleButton value={ACTIVE_VIEW_ALL}>All</ToggleButton>
-                                                        <ToggleButton value={ACTIVE_VIEW_SUBREDDIT}>By Subreddit</ToggleButton>
-                                                    </ToggleButtonGroup>
-                                                </Grid>
-                                                <Grid item xs={1} md={2}>
-                                                    <Box ml={1}>
-                                                        <Tooltip title="Export to CSV">
-                                                            <IconButton onClick={onExportButtonClick}>
-                                                                <Save />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                    </Box>
-                                                </Grid>
-                                            </Grid>
-                                            <TextField
-                                                autoFocus
-                                                value={query}
-                                                placeholder="Search..."
-                                                onChange={({ target: { value } }) => onQueryChange(value)}
-                                                className={classes.searchfield}
-                                                margin="dense"
-                                            />
-                                            {isFetching && (
-                                                <Typography>
-                                                    Syncing list...
-                                                </Typography>
-                                            )}
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                                <Box>
+                                <AppBar position="sticky">
+                                    <Toolbar>
+                                        <ToggleButtonGroup className={classes.toggleGroup} value={activeView} exclusive onChange={(_, view) => setActiveView(view)}>
+                                            <ToggleButton value={ACTIVE_VIEW_ALL}>All</ToggleButton>
+                                            <ToggleButton value={ACTIVE_VIEW_SUBREDDIT}>Subreddit</ToggleButton>
+                                        </ToggleButtonGroup>
+                                        <Box ml={1}>
+                                            <Tooltip title="Export to CSV">
+                                                <IconButton color="inherit" onClick={onExportButtonClick}>
+                                                    <Save />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
+                                        <Box flexGrow={1} />
+                                        <TextField
+                                            autoFocus
+                                            value={query}
+                                            variant="outlined"
+                                            placeholder="Search..."
+                                            onChange={({ target: { value } }) => onQueryChange(value)}
+                                            className={classes.searchfield}
+                                            margin="dense"
+                                        />
+                                    </Toolbar>
+                                </AppBar>
+                                <Box p={2}>
                                     {activeView === ACTIVE_VIEW_ALL
                                         ? <SavedList items={displayedItems} />
                                         : <SubredditSavedList items={displayedItems} />
@@ -204,7 +192,6 @@ const Saved = ({
                             </div>
                         )
                     }
-                </Box>
             </Paper>
         </div>
     );
