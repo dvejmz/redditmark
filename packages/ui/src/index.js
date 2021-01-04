@@ -10,14 +10,13 @@ import theme from './theme';
 import App from './App';
 import SavedItemSource from './data/savedItemSource';
 import createRequest from './api/request';
-const apiBase = 'https://4fjf8rnq0j.execute-api.eu-west-2.amazonaws.com'
+const apiBase = process.env.REACT_APP_API_BASE_URL;
 const apiEndpoint = `${apiBase}/saved`;
 const authEndpoint = `${apiBase}/token`;
-const authRedirectUrl = "https://redditmark.apps.sgfault.com/saved";
-//const apiEndpoint = 'http://localhost:3002/saved';
-//const authEndpoint = 'http://localhost:3001/token';
-//const authRedirectUrl = 'http://localhost:3000/saved';
-const redditClientId = 'lc3vtl-uKhFj8A';
+const authRedirectUrl = process.env.REACT_APP_AUTH_CALLBACK_URL;
+const redditClientId = process.env.REACT_APP_API_CLIENT_ID;
+const showReactQueryDevtools = process.env.NODE_ENV === 'development';
+
 const request = createRequest();
 
 const queryClient = new QueryClient();
@@ -35,7 +34,8 @@ ReactDOM.render(
                     authRedirectUrl={authRedirectUrl}
                     redditClientId={redditClientId}
                 />
-                <ReactQueryDevtools initialIsOpen position={'bottom-right'} />
+                {showReactQueryDevtools &&
+                    <ReactQueryDevtools initialIsOpen position={'bottom-right'} />}
             </QueryClientProvider>
         </CookiesProvider>
     </ThemeProvider>,
