@@ -46,8 +46,11 @@ const Saved = ({
     fetchSavedItems,
 }) => {
     const [activeView, setActiveView] = useState(ACTIVE_VIEW_ALL);
-    const tokenResult = useQuery('token', getAccessToken);
-    const token = tokenResult.data;
+    const {
+        isError: isTokenError,
+        error: tokenError,
+        data: token,
+    } = useQuery('token', getAccessToken);
     const {
         isLoading,
         isIdle,
@@ -136,7 +139,9 @@ const Saved = ({
         saveAs(savedItemsBlob, 'reddit-saved-posts.csv');
     };
 
-    if (isError) {
+    if (isTokenError) {
+        return (<Error message={tokenError.message} />);
+    } else if (isError) {
         return (<Error message={error.message} />);
     }
 
@@ -157,7 +162,7 @@ const Saved = ({
                                 <Grid container>
                                     <Grid item xs={12}>
                                         <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
-                                            <Grid xs={6} md={3} container alignItems="center">
+                                            <Grid xs={6} md={3} container item alignItems="center">
                                                 <Grid item xs={11} md={10}>
                                                     <ToggleButtonGroup className={classes.toggleGroup} value={activeView} exclusive onChange={(_, view) => setActiveView(view)}>
                                                         <ToggleButton value={ACTIVE_VIEW_ALL}>All</ToggleButton>
