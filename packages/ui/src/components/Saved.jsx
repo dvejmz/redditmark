@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useState } from 'react';
 import Fuse from 'fuse.js';
 import {
    useQuery,
@@ -8,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
+import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -16,6 +17,7 @@ import { Save } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 
 import SavedList from '../components/SavedList';
+import SubredditSavedList from '../components/SubredditSavedList';
 import Error from '../components/Error';
 
 const styles = {
@@ -41,6 +43,7 @@ const Saved = ({
     getAccessToken,
     fetchSavedItems,
 }) => {
+    const [activeView, setActiveView] = useState(ACTIVE_VIEW_ALL);
     const tokenResult = useQuery('token', getAccessToken);
     const token = tokenResult.data;
     const {
@@ -52,7 +55,7 @@ const Saved = ({
         isFetchingNextPage,
         fetchNextPage,
         error,
-        data: dataPages = { pages: [] },
+        data = { pages: [] },
     } = useInfiniteQuery(
             'savedItems',
             ({ pageParam = '' }) => fetchSavedItems({ token, pageParam }),
@@ -69,7 +72,7 @@ const Saved = ({
     if (shouldFetchNextPage) {
         fetchNextPage();
     }
-    const allItems = dataPages.pages.reduce((acc, p, _) => { return [...acc, ...p.items]; }, []);
+    const allItems = data.pages.reduce((acc, p, _) => { return [...acc, ...p.items]; }, []);
     const searcher = new Fuse(allItems, {
         keys: ['title'],
     });
@@ -131,33 +134,52 @@ const Saved = ({
     return (
         <div id="saved" className={classes.root}>
             <Paper>
-            {isFirstLoad
-                ? (<Typography>Loading...</Typography>)
-                : (
-                    <div>
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
-                                    <TextField
-                                        autoFocus
-                                        value={query}
-                                        placeholder="Search..."
-                                        onChange={({ target: { value } }) => onQueryChange(value)}
-                                        className={classes.searchfield}
-                                        margin="dense"
-                                    />
-                                    {isFetching && (
-                                        <Typography>
-                                            Syncing list...
-                                        </Typography>
-                                    )}
+                <Box p={2}>
+                    {isFirstLoad
+                        ? (
+                            <Box>
+                                <Typography>Loading...</Typography>
+                            </Box>
+                        )
+                        : (
+                            <div>
+                                <Grid container>
+                                    <Grid item xs={12}>
+                                        <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
+                                            <Grid xs={6} md={3} container alignItems="center">
+                                                <Grid item xs={11} md={10}>
+                                                    <ToggleButtonGroup className={classes.toggleGroup} value={activeView} exclusive onChange={(_, view) => setActiveView(view)}>
+                                                        <ToggleButton value={ACTIVE_VIEW_ALL}>All</ToggleButton>
+                                                        <ToggleButton value={ACTIVE_VIEW_SUBREDDIT}>By Subreddit</ToggleButton>
+                                                    </ToggleButtonGroup>
+                                                </Grid>
+                                            </Grid>
+                                            <TextField
+                                                autoFocus
+                                                value={query}
+                                                placeholder="Search..."
+                                                onChange={({ target: { value } }) => onQueryChange(value)}
+                                                className={classes.searchfield}
+                                                margin="dense"
+                                            />
+                                            {isFetching && (
+                                                <Typography>
+                                                    Syncing list...
+                                                </Typography>
+                                            )}
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </Grid>
-                        <SavedList items={displayedItems} />
-                    </div>
-                )
-            }
+                                <Box>
+                                    {activeView === ACTIVE_VIEW_ALL
+                                        ? <SavedList items={displayedItems} />
+                                        : <SubredditSavedList items={displayedItems} />
+                                    }
+                                </Box>
+                            </div>
+                        )
+                    }
+                </Box>
             </Paper>
         </div>
     );
@@ -165,6 +187,9 @@ const Saved = ({
 
 const UPDATE_QUERY = 'UPDATE_QUERY';
 const PERFORM_SEARCH = 'PERFORM_SEARCH';
+
+const ACTIVE_VIEW_ALL = 'all';
+const ACTIVE_VIEW_SUBREDDIT = 'subreddit';
 
 const initialSearchState = {
   query: '',
