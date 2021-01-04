@@ -1,5 +1,6 @@
 import React, { useReducer, useState } from 'react';
 import Fuse from 'fuse.js';
+import { saveAs } from 'file-saver';
 import {
    useQuery,
    useInfiniteQuery,
@@ -17,6 +18,7 @@ import { Save } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 
 import SavedList from '../components/SavedList';
+import toCsv from '../helper/csv';
 import SubredditSavedList from '../components/SubredditSavedList';
 import Error from '../components/Error';
 
@@ -125,6 +127,15 @@ const Saved = ({
     const { query, searchResult, searchActive } = searchState;
     const displayedItems = searchActive ? searchResult : allItems;
 
+    const onExportButtonClick = () => {
+        console.log(toCsv)
+        const savedItemsBlob = new Blob(
+            [toCsv(allItems, 'title,url,subreddit')],
+            { type: 'text/csv;charset=utf-8'},
+        );
+        saveAs(savedItemsBlob, 'reddit-saved-posts.csv');
+    };
+
     if (isError) {
         return (<Error message={error.message} />);
     }
@@ -152,6 +163,15 @@ const Saved = ({
                                                         <ToggleButton value={ACTIVE_VIEW_ALL}>All</ToggleButton>
                                                         <ToggleButton value={ACTIVE_VIEW_SUBREDDIT}>By Subreddit</ToggleButton>
                                                     </ToggleButtonGroup>
+                                                </Grid>
+                                                <Grid item xs={1} md={2}>
+                                                    <Box ml={1}>
+                                                        <Tooltip title="Export to CSV">
+                                                            <IconButton onClick={onExportButtonClick}>
+                                                                <Save />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </Box>
                                                 </Grid>
                                             </Grid>
                                             <TextField

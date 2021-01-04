@@ -2,8 +2,8 @@ function toCsvLine(el) {
     return `"${el._title}",${el._url},${el._subreddit}`;
 }
 
-export default function toCsv(items, header) {
-    return items.reduce((acc, val) =>
-        (`${acc}\n${toCsvLine(val)}`),
-            header);
-};
+const toCsv = (items, header) =>
+    items.reduce((acc, val) =>
+        (`${acc}\n${toCsvLine(val)}`), header);
+
+export default toCsv;
