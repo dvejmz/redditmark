@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useState } from 'react';
 import Fuse from 'fuse.js';
 import {
    useQuery,
@@ -17,6 +17,7 @@ import { Save } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 
 import SavedList from '../components/SavedList';
+import SubredditSavedList from '../components/SubredditSavedList';
 import Error from '../components/Error';
 
 const styles = {
@@ -42,6 +43,7 @@ const Saved = ({
     getAccessToken,
     fetchSavedItems,
 }) => {
+    const [activeView, setActiveView] = useState(ACTIVE_VIEW_ALL);
     const tokenResult = useQuery('token', getAccessToken);
     const token = tokenResult.data;
     const {
@@ -134,12 +136,24 @@ const Saved = ({
             <Paper>
                 <Box p={2}>
                     {isFirstLoad
-                        ? (<Box><Typography>Loading...</Typography></Box>)
+                        ? (
+                            <Box>
+                                <Typography>Loading...</Typography>
+                            </Box>
+                        )
                         : (
                             <div>
                                 <Grid container>
                                     <Grid item xs={12}>
                                         <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
+                                            <Grid xs={6} md={3} container alignItems="center">
+                                                <Grid item xs={11} md={10}>
+                                                    <ToggleButtonGroup className={classes.toggleGroup} value={activeView} exclusive onChange={(_, view) => setActiveView(view)}>
+                                                        <ToggleButton value={ACTIVE_VIEW_ALL}>All</ToggleButton>
+                                                        <ToggleButton value={ACTIVE_VIEW_SUBREDDIT}>By Subreddit</ToggleButton>
+                                                    </ToggleButtonGroup>
+                                                </Grid>
+                                            </Grid>
                                             <TextField
                                                 autoFocus
                                                 value={query}
@@ -156,7 +170,12 @@ const Saved = ({
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                <SavedList items={displayedItems} />
+                                <Box>
+                                    {activeView === ACTIVE_VIEW_ALL
+                                        ? <SavedList items={displayedItems} />
+                                        : <SubredditSavedList items={displayedItems} />
+                                    }
+                                </Box>
                             </div>
                         )
                     }
@@ -168,6 +187,9 @@ const Saved = ({
 
 const UPDATE_QUERY = 'UPDATE_QUERY';
 const PERFORM_SEARCH = 'PERFORM_SEARCH';
+
+const ACTIVE_VIEW_ALL = 'all';
+const ACTIVE_VIEW_SUBREDDIT = 'subreddit';
 
 const initialSearchState = {
   query: '',
