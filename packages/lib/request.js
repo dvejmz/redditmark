@@ -1,6 +1,6 @@
 const axios = require('axios').default;
 
-module.exports = (logger, debugEnabled = false) => {
+export default ({ debugEnabled = false } = {}) => {
     if (debugEnabled) {
         axios.interceptors.request.use(x => {
 
@@ -15,7 +15,7 @@ module.exports = (logger, debugEnabled = false) => {
             });
 
             const printable = `${new Date()} | Request: ${x.method.toUpperCase()} | ${x.url} | ${ JSON.stringify( x.data) } | ${JSON.stringify(headers)}`;
-            logger.info('request', { request: printable });
+            console.log(printable);
 
             return x;
         });
@@ -23,7 +23,7 @@ module.exports = (logger, debugEnabled = false) => {
         axios.interceptors.response.use(x => {
 
             const printable = `${new Date()} | Response: ${x.status} | ${ JSON.stringify(x.data) }`;
-            logger.info('response', { response: printable });
+            console.log(printable);
 
             return x;
         });
@@ -57,6 +57,26 @@ module.exports = (logger, debugEnabled = false) => {
                 body
             };
         },
+        async get(uri, headers = {}, params = {}) {
+            try {
+                const { data, status } = await axios.get(uri, { headers, params });
+                return { body: data, status };
+            } catch (err) {
+                throw new Error(err.message);
+            }
+        },
+        async post(uri, body, headers = {}) {
+            try {
+                const { data, status } = await axios.post(uri, body, {
+                    headers: {
+                        'content-type': 'text/plain;charset=UTF-8',
+                        ...headers,
+                    },
+                });
+                return { body: data, status };
+            } catch (err) {
+                throw new Error(err.message);
+            }
+        },
     };
 };
-

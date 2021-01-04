@@ -1,5 +1,5 @@
-const createRequest = require('./request');
-const FormData = require('form-data');
+import createRequest from '../../lib/request';
+import FormData from 'form-data';
 
 module.exports = ({
     logger,
@@ -8,7 +8,7 @@ module.exports = ({
     apiClientSecret,
     clientUrl,
 }) => {
-    const request = createRequest(logger, debugEnabled);
+    const request = createRequest({ debugEnabled });
 
     async function handleAuth(authCode) {
         if (!authCode.length) {
