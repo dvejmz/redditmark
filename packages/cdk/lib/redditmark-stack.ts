@@ -42,7 +42,7 @@ export class RedditmarkStack extends cdk.Stack {
         DEBUG_ENABLED: debugEnabled.toString(),
         NODE_ENV: isDev ? 'development' : 'production',
       },
-      memorySize: isProd ? 256 : undefined,
+      memorySize: 256,
       bundling: isProd ? {
         minify: true,
         sourceMap: true,
@@ -55,6 +55,7 @@ export class RedditmarkStack extends cdk.Stack {
         API_CLIENT_ID: apiClientId,
         API_CLIENT_SECRET: apiClientSecret,
         CLIENT_URL: apiClientCallbackUrl,
+        DEBUG_ENABLED: debugEnabled.toString(),
       },
       bundling: isProd ? {
         minify: true,
