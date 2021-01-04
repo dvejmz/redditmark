@@ -91,7 +91,7 @@ export class RedditmarkStack extends cdk.Stack {
         domainName: "d1bqubjc1c6n2c.cloudfront.net",
       });
       const siteBucket = s3.Bucket.fromBucketName(this, "SiteBucket", "redditmark.apps.sgfault.com");
-      const siteDeployment = new s3deployment.BucketDeployment(this, "SiteBucketDeployment", {
+      new s3deployment.BucketDeployment(this, "SiteBucketDeployment", {
         sources: [ s3deployment.Source.asset(`${__dirname}/../../ui/build`) ],
         destinationBucket: siteBucket,
         distribution: siteDistribution,

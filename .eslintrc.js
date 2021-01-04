@@ -8,7 +8,6 @@ module.exports = {
         "ecmaVersion": 2018,
         "sourceType": "module",
     },
-    "ignorePatterns": ["packages/ui", "packages/cdk"],
     "rules": {
         "semi": "error",
         "import/no-unresolved": [
