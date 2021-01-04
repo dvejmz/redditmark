@@ -42,7 +42,7 @@ export class RedditmarkStack extends cdk.Stack {
         DEBUG_ENABLED: debugEnabled.toString(),
         NODE_ENV: isDev ? 'development' : 'production',
       },
-      memorySize: isProd ? 256 : undefined,
+      memorySize: 256,
       bundling: isProd ? {
         minify: true,
         sourceMap: true,
@@ -55,6 +55,7 @@ export class RedditmarkStack extends cdk.Stack {
         API_CLIENT_ID: apiClientId,
         API_CLIENT_SECRET: apiClientSecret,
         CLIENT_URL: apiClientCallbackUrl,
+        DEBUG_ENABLED: debugEnabled.toString(),
       },
       bundling: isProd ? {
         minify: true,
@@ -91,7 +92,7 @@ export class RedditmarkStack extends cdk.Stack {
         domainName: "d1bqubjc1c6n2c.cloudfront.net",
       });
       const siteBucket = s3.Bucket.fromBucketName(this, "SiteBucket", "redditmark.apps.sgfault.com");
-      const siteDeployment = new s3deployment.BucketDeployment(this, "SiteBucketDeployment", {
+      new s3deployment.BucketDeployment(this, "SiteBucketDeployment", {
         sources: [ s3deployment.Source.asset(`${__dirname}/../../ui/build`) ],
         destinationBucket: siteBucket,
         distribution: siteDistribution,

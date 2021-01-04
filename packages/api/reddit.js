@@ -19,7 +19,7 @@ module.exports = (accessToken) => {
         }
         const lastItemId = savedItems.slice(-1)[0].name;
         return { items: savedItems, next: lastItemId };
-    }
+    };
     
 
     return {
