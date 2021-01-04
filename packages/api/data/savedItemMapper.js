@@ -4,6 +4,6 @@ module.exports = (data) => (
     new SavedItem(
         data.title,
         data.url,
-        data.subreddit.display_name,
+        data.subreddit.display_name
     )
 );
