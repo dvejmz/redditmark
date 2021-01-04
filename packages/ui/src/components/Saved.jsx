@@ -8,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
+import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -52,7 +53,7 @@ const Saved = ({
         isFetchingNextPage,
         fetchNextPage,
         error,
-        data: dataPages = { pages: [] },
+        data = { pages: [] },
     } = useInfiniteQuery(
             'savedItems',
             ({ pageParam = '' }) => fetchSavedItems({ token, pageParam }),
@@ -69,7 +70,7 @@ const Saved = ({
     if (shouldFetchNextPage) {
         fetchNextPage();
     }
-    const allItems = dataPages.pages.reduce((acc, p, _) => { return [...acc, ...p.items]; }, []);
+    const allItems = data.pages.reduce((acc, p, _) => { return [...acc, ...p.items]; }, []);
     const searcher = new Fuse(allItems, {
         keys: ['title'],
     });
@@ -131,33 +132,35 @@ const Saved = ({
     return (
         <div id="saved" className={classes.root}>
             <Paper>
-            {isFirstLoad
-                ? (<Typography>Loading...</Typography>)
-                : (
-                    <div>
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
-                                    <TextField
-                                        autoFocus
-                                        value={query}
-                                        placeholder="Search..."
-                                        onChange={({ target: { value } }) => onQueryChange(value)}
-                                        className={classes.searchfield}
-                                        margin="dense"
-                                    />
-                                    {isFetching && (
-                                        <Typography>
-                                            Syncing list...
-                                        </Typography>
-                                    )}
+                <Box p={2}>
+                    {isFirstLoad
+                        ? (<Box><Typography>Loading...</Typography></Box>)
+                        : (
+                            <div>
+                                <Grid container>
+                                    <Grid item xs={12}>
+                                        <Grid className={classes.headingbar} container justify="space-between" alignItems="center">
+                                            <TextField
+                                                autoFocus
+                                                value={query}
+                                                placeholder="Search..."
+                                                onChange={({ target: { value } }) => onQueryChange(value)}
+                                                className={classes.searchfield}
+                                                margin="dense"
+                                            />
+                                            {isFetching && (
+                                                <Typography>
+                                                    Syncing list...
+                                                </Typography>
+                                            )}
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </Grid>
-                        <SavedList items={displayedItems} />
-                    </div>
-                )
-            }
+                                <SavedList items={displayedItems} />
+                            </div>
+                        )
+                    }
+                </Box>
             </Paper>
         </div>
     );
