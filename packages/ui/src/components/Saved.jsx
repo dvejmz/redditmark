@@ -131,7 +131,6 @@ const Saved = ({
     const displayedItems = searchActive ? searchResult : allItems;
 
     const onExportButtonClick = () => {
-        console.log(toCsv)
         const savedItemsBlob = new Blob(
             [toCsv(allItems, 'title,url,subreddit')],
             { type: 'text/csv;charset=utf-8'},
