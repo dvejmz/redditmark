@@ -11,6 +11,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
+import LoopIcon from '@material-ui/icons/Loop';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
@@ -58,6 +59,7 @@ const Saved = ({
         isIdle,
         isError,
         hasNextPage,
+        isFetching,
         isFetchingNextPage,
         fetchNextPage,
         error,
@@ -165,11 +167,19 @@ const Saved = ({
                                             <ToggleButton value={ACTIVE_VIEW_SUBREDDIT}>Subreddit</ToggleButton>
                                         </ToggleButtonGroup>
                                         <Box ml={1}>
-                                            <Tooltip title="Export to CSV">
-                                                <IconButton color="inherit" onClick={onExportButtonClick}>
-                                                    <Save />
-                                                </IconButton>
-                                            </Tooltip>
+                                            {isFetching
+                                                ? (
+                                                    <Tooltip title="Syncing saved items list...">
+                                                        <LoopIcon color="inherit" />
+                                                    </Tooltip>
+                                                ): (
+                                                    <Tooltip title="Export to CSV">
+                                                        <IconButton color="inherit" onClick={onExportButtonClick}>
+                                                            <Save />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                )
+                                            }
                                         </Box>
                                         <Box flexGrow={1} />
                                         <TextField
