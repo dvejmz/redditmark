@@ -6,7 +6,7 @@ class SavedItem {
     }
 
     get title() {
-        return this._title;
+        return this._title || "";
     }
 
     get url() {

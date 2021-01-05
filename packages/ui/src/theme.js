@@ -21,6 +21,9 @@ const theme = createMuiTheme({
       '@global': {
         a: {
           textDecoration: 'none',
+        },
+        body: {
+          overflow: 'hidden',
         }
       }
     }

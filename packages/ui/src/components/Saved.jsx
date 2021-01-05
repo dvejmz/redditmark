@@ -183,7 +183,7 @@ const Saved = ({
                                         />
                                     </Toolbar>
                                 </AppBar>
-                                <Box p={2}>
+                                <Box p={2} pr={0}>
                                     {activeView === ACTIVE_VIEW_ALL
                                         ? <SavedList items={displayedItems} />
                                         : <SubredditSavedList items={displayedItems} />

@@ -19,6 +19,8 @@
     "react-query": "^3.5.9",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^2.1.5",
+    "react-virtualized-auto-sizer": "^1.0.3",
+    "react-window": "^1.8.6",
     "snoowrap": "^1.22.0",
     "typeface-roboto": "0.0.54"
   },
