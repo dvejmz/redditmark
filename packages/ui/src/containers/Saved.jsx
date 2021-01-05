@@ -3,6 +3,7 @@ import queryString from 'query-string';
 
 import Saved from '../components/Saved';
 import SavedItemRepository from '../data/savedItemRepository';
+import { MAX_SESSION_COOKIE_AGE } from '../constants';
 
 const SavedPage = ({
     location,
@@ -15,21 +16,27 @@ const SavedPage = ({
     const getAccessToken = async () => {
         const accessTokenCookie = cookies.get('access_token');
 
-        let newToken = '';
+        let accessToken = '';
         if (!accessTokenCookie) {
             const qsParams = queryString.parse(location.search);
-            const code = qsParams.code;
-            newToken = await fetchToken(code);
+            const { code, state } = qsParams;
+            accessToken = await fetchToken(code);
 
-            if (!newToken) {
-                throw new Error('Failed to autenticate with reddit');
+            if (!accessToken || !state || !state.length) {
+                throw new Error('Failed to autenticate with reddit. Try again by revisiting the home page.');
             }
-            cookies.set('access_token', newToken, { path: '/', maxAge: 3600 });
+
+            const sentState = cookies.get('authorisation_state_nonce');
+            if (sentState !== state) {
+                throw new Error('Failed to authenticate with reddit: OAuth state nonce mismatch');
+            }
+
+            cookies.set('access_token', accessToken, { path: '/', maxAge: MAX_SESSION_COOKIE_AGE });
         } else {
-            newToken = accessTokenCookie;
+            accessToken = accessTokenCookie;
         }
 
-        return newToken;
+        return accessToken;
     };
 
     const fetchSavedItems = async ({ token, pageParam = '' }) => {
