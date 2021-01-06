@@ -1,0 +1,21 @@
+name: branch
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1.4.2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: install deps
+        run: yarn install --frozen-lockfile
+      - name: lint
+        run: yarn lint
