@@ -13,11 +13,14 @@ const SavedList = React.memo(props => {
 
     return (
         <List component="nav">
-            {items.map((item, idx) => (
-                <ListItemLink href={item.url} target="_blank" key={idx}>
-                    <ListItemText inset={inset} primary={item.title} secondary={item.subreddit} />
-                </ListItemLink>
-            ))}
+            {items.length
+                ? items.map((item, idx) => (
+                        <ListItemLink href={item.url} target="_blank" key={idx}>
+                            <ListItemText inset={inset} primary={item.title} secondary={item.subreddit} />
+                        </ListItemLink>
+                    ))
+                : "You have no saved items. Come back when you've added some!"
+            }
         </List>
     );
 });
