@@ -5,17 +5,18 @@ on:
       - master
 
 jobs:
-  test-and-deploy:
+  lint:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [12.x]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1.4.2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
       - name: install deps
         run: yarn install --frozen-lockfile
       - name: lint
-        run: yarn lint
+        run: yarn lint:all

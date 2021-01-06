@@ -19,4 +19,4 @@ jobs:
       - name: install deps
         run: yarn install --frozen-lockfile
       - name: lint
-        run: yarn lint
+        run: yarn lint:all
