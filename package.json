@@ -8,7 +8,7 @@
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "lint:cdk": "cd ./packages/cdk && eslint .",
-        "lint:all": "yarn lint || yarn lint:cdk",
+        "lint:all": "yarn lint && yarn lint:cdk",
         "deploy": "yarn --cwd ./packages/ui build && yarn --cwd ./packages/cdk deploy"
     },
     "devDependencies": {
