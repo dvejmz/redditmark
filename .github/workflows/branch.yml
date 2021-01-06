@@ -18,5 +18,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: install deps
         run: yarn install --frozen-lockfile
-      - name: lint
-        run: yarn lint:all
+      - name: lint API services
+        run: yarn lint
