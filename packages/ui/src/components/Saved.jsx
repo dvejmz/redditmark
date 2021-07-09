@@ -14,6 +14,8 @@ import IconButton from '@material-ui/core/IconButton';
 import LoopIcon from '@material-ui/icons/Loop';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Save } from '@material-ui/icons';
@@ -194,6 +196,10 @@ const Saved = ({
                                     </Toolbar>
                                 </AppBar>
                                 <Box p={2}>
+                                    <Tabs value={activeView} onChange={(_, view) => setActiveView(view)} centered>
+                                        <Tab value={ACTIVE_VIEW_ALL} label="All" />
+                                        <Tab value={ACTIVE_VIEW_SUBREDDIT} label="By Subreddit" />
+                                    </Tabs>
                                     {activeView === ACTIVE_VIEW_ALL
                                         ? <SavedList items={displayedItems} />
                                         : <SubredditSavedList items={displayedItems} />
