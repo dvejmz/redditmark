@@ -51,6 +51,7 @@ const Saved = ({
     fetchSavedItems,
 }) => {
     const [activeView, setActiveView] = useState(ACTIVE_VIEW_ALL);
+    const [activeCategory, setActiveCategory] = useState(CATEGORY_SAVED);
     const {
         isError: isTokenError,
         error: tokenError,
@@ -164,9 +165,9 @@ const Saved = ({
                             <div>
                                 <AppBar position="sticky">
                                     <Toolbar>
-                                        <ToggleButtonGroup className={classes.toggleGroup} value={activeView} exclusive onChange={(_, view) => setActiveView(view)}>
-                                            <ToggleButton value={ACTIVE_VIEW_ALL}>All</ToggleButton>
-                                            <ToggleButton value={ACTIVE_VIEW_SUBREDDIT}>Subreddit</ToggleButton>
+                                        <ToggleButtonGroup className={classes.toggleGroup} value={activeCategory} exclusive onChange={(_, category) => setActiveCategory(category)}>
+                                            <ToggleButton value={CATEGORY_SAVED}>Saved</ToggleButton>
+                                            <ToggleButton value={CATEGORY_COMMENTS}>Comments</ToggleButton>
                                         </ToggleButtonGroup>
                                         <Box ml={1}>
                                             {isFetching
@@ -200,9 +201,12 @@ const Saved = ({
                                         <Tab value={ACTIVE_VIEW_ALL} label="All" />
                                         <Tab value={ACTIVE_VIEW_SUBREDDIT} label="By Subreddit" />
                                     </Tabs>
-                                    {activeView === ACTIVE_VIEW_ALL
-                                        ? <SavedList items={displayedItems} />
-                                        : <SubredditSavedList items={displayedItems} />
+                                    {activeCategory === CATEGORY_SAVED
+                                        ? (activeView === ACTIVE_VIEW_ALL
+                                            ? <SavedList items={displayedItems} />
+                                            : <SubredditSavedList items={displayedItems} />
+                                        )
+                                        : (<div>COMMENTS</div>)
                                     }
                                 </Box>
                             </div>
@@ -218,6 +222,9 @@ const PERFORM_SEARCH = 'PERFORM_SEARCH';
 
 const ACTIVE_VIEW_ALL = 'all';
 const ACTIVE_VIEW_SUBREDDIT = 'subreddit';
+
+const CATEGORY_SAVED = 'saved';
+const CATEGORY_COMMENTS = 'comments';
 
 const initialSearchState = {
   query: '',
