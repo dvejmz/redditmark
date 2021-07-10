@@ -1,4 +1,5 @@
 import React, { useReducer, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Fuse from 'fuse.js';
 import { saveAs } from 'file-saver';
 import {
@@ -7,13 +8,12 @@ import {
  } from 'react-query';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import ToggleButton from '@material-ui/lab/ToggleButton';
 import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
 import LoopIcon from '@material-ui/icons/Loop';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AppBar from '@material-ui/core/AppBar';
@@ -51,7 +51,6 @@ const Saved = ({
     fetchSavedItems,
 }) => {
     const [activeView, setActiveView] = useState(ACTIVE_VIEW_ALL);
-    const [activeCategory, setActiveCategory] = useState(CATEGORY_SAVED);
     const {
         isError: isTokenError,
         error: tokenError,
@@ -165,10 +164,8 @@ const Saved = ({
                             <div>
                                 <AppBar position="sticky">
                                     <Toolbar>
-                                        <ToggleButtonGroup className={classes.toggleGroup} value={activeCategory} exclusive onChange={(_, category) => setActiveCategory(category)}>
-                                            <ToggleButton value={CATEGORY_SAVED}>Saved</ToggleButton>
-                                            <ToggleButton value={CATEGORY_COMMENTS}>Comments</ToggleButton>
-                                        </ToggleButtonGroup>
+                                        <Button color="inherit" component={Link} to="/saved">Saved</Button>
+                                        <Button color="inherit" component={Link} to="/comments">Comments</Button>
                                         <Box ml={1}>
                                             {isFetching
                                                 ? (
@@ -201,12 +198,9 @@ const Saved = ({
                                         <Tab value={ACTIVE_VIEW_ALL} label="All" />
                                         <Tab value={ACTIVE_VIEW_SUBREDDIT} label="By Subreddit" />
                                     </Tabs>
-                                    {activeCategory === CATEGORY_SAVED
-                                        ? (activeView === ACTIVE_VIEW_ALL
-                                            ? <SavedList items={displayedItems} />
-                                            : <SubredditSavedList items={displayedItems} />
-                                        )
-                                        : (<div>COMMENTS</div>)
+                                    {activeView === ACTIVE_VIEW_ALL
+                                        ? <SavedList items={displayedItems} />
+                                        : <SubredditSavedList items={displayedItems} />
                                     }
                                 </Box>
                             </div>
@@ -222,9 +216,6 @@ const PERFORM_SEARCH = 'PERFORM_SEARCH';
 
 const ACTIVE_VIEW_ALL = 'all';
 const ACTIVE_VIEW_SUBREDDIT = 'subreddit';
-
-const CATEGORY_SAVED = 'saved';
-const CATEGORY_COMMENTS = 'comments';
 
 const initialSearchState = {
   query: '',

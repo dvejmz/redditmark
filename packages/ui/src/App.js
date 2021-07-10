@@ -1,8 +1,9 @@
 import React from 'react';
 import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
-import Home from './containers/Home';
+import Login from './containers/Login';
 import Saved from './containers/Saved';
+import Comments from './containers/Comments';
 import Auth from './auth';
 
 function App(props) {
@@ -28,7 +29,7 @@ function App(props) {
                 <Route
                     exact path='/'
                     render={routeProps => (
-                        <Home
+                        <Login
                             {...routeProps}
                             cookies={cookies}
                             authRedirectUrl={authRedirectUrl}
@@ -47,6 +48,12 @@ function App(props) {
                             request={request}
                             apiEndpoint={apiEndpoint}
                         />
+                    )}
+                />
+                <Route
+                    exact path='/comments'
+                    render={() => (
+                        <Comments />
                     )}
                 />
                 <Route component={notFoundComponent} />
