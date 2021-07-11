@@ -42,8 +42,7 @@ function App(props) {
                     render={(routeProps) => (
                         <Saved
                             {...routeProps}
-                            fetchToken={auth.fetchToken}
-                            cookies={cookies}
+                            getAccessToken={auth.getAccessToken}
                             createReddit={createReddit}
                             request={request}
                             apiEndpoint={apiEndpoint}
