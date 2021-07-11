@@ -30,7 +30,6 @@ const SavedPage = ({
         };
     }
 
-
     return (
         <Saved
             getAccessToken={() => getAccessToken(location)}

@@ -51,8 +51,11 @@ function App(props) {
                 />
                 <Route
                     exact path='/comments'
-                    render={() => (
-                        <Comments />
+                    render={(routeProps) => (
+                        <Comments
+                          {...routeProps}
+                          getAccessToken={auth.getAccessToken}
+                        />
                     )}
                 />
                 <Route component={notFoundComponent} />

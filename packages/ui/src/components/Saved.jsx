@@ -21,9 +21,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { Save } from '@material-ui/icons';
 import { fade, withStyles } from '@material-ui/core/styles';
 
-import SavedList from '../components/SavedList';
+import ItemList from '../components/ItemList';
 import toCsv from '../helper/csv';
-import SubredditSavedList from '../components/SubredditSavedList';
+import ItemListBySubreddit from '../components/ItemListBySubreddit';
 import Error from '../components/Error';
 
 const styles = theme => ({
@@ -199,8 +199,8 @@ const Saved = ({
                                         <Tab value={ACTIVE_VIEW_SUBREDDIT} label="By Subreddit" />
                                     </Tabs>
                                     {activeView === ACTIVE_VIEW_ALL
-                                        ? <SavedList items={displayedItems} />
-                                        : <SubredditSavedList items={displayedItems} />
+                                        ? <ItemList items={displayedItems} />
+                                        : <ItemListBySubreddit items={displayedItems} />
                                     }
                                 </Box>
                             </div>
