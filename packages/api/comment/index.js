@@ -1,5 +1,5 @@
 const base = require('node-app-base')('redditmark-api');
-const SavedItemRepository = require('./data/savedItemRepository');
+const CommentRepository = require('../data/commentRepository');
 
 const { config, logger } = base;
 config.set({
@@ -9,7 +9,7 @@ config.set({
     }
 });
 
-const createReddit = require('./reddit');
+const createReddit = require('../reddit');
 
 exports.handler = async (event) => {
     if (config.get('DEBUG_ENABLED')) {
@@ -27,14 +27,16 @@ exports.handler = async (event) => {
 
     const token = authorisationHeader.slice(authorisationHeader.indexOf(' ') + 1);
     const reddit = createReddit(token);
-    const savedItemRepository = SavedItemRepository(reddit);
+    const commentRepository = CommentRepository(reddit);
+
     const { rawQueryString } = event;
     const fetchAfterIndex = rawQueryString
         ? rawQueryString.match(/idx=(.*)/)[1]
         : '';
     let response = null;
+
     try {
-        response = await savedItemRepository.getSavedItems(fetchAfterIndex);
+        response = await commentRepository.getComments();
     } catch (e) {
         logger.error('app', { error: e.message });
         throw new Error("Unhandled error");

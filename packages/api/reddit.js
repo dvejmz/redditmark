@@ -20,9 +20,22 @@ module.exports = (accessToken) => {
         const lastItemId = savedItems.slice(-1)[0].name;
         return { items: savedItems, next: lastItemId };
     };
-    
+
+    const getComments = async ({ limit = MAX_ITEM_COUNT, after = '' } = {}) => {
+        const comments = await reddit
+            .getMe()
+            .getComments({ limit, after });
+        console.log(comments);
+        if (!comments.length) {
+            return { items: [], next: '' };
+        }
+        //const lastItemId = comments.slice(-1)[0].name;
+        return { items: comments, next: '' };
+        //return { items: comments, next: lastItemId };
+    };
 
     return {
+        getComments,
         getSavedItems,
     };
 };
