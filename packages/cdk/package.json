@@ -9,7 +9,8 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "deploy": " yarn build && yarn cdk deploy --all --require-approval never --progress events"
+    "deploy": " yarn build && yarn cdk deploy --all --require-approval never --progress events",
+    "deploy:dev": " yarn build && yarn cdk deploy --require-approval never --progress events redditmark-dev"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.82.0",
