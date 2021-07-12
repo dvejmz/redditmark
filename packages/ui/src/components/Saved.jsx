@@ -22,6 +22,7 @@ import MenuBar from './MenuBar';
 import toCsv from '../helper/csv';
 import ItemListBySubreddit from '../components/ItemListBySubreddit';
 import BaseCss from '../styles/base';
+import { ACTIVE_VIEW_ALL, ACTIVE_VIEW_SUBREDDIT } from '../constants';
 import Error from '../components/Error';
 
 const styles = theme => ({
@@ -220,9 +221,6 @@ const Saved = ({
 
 const UPDATE_QUERY = 'UPDATE_QUERY';
 const PERFORM_SEARCH = 'PERFORM_SEARCH';
-
-const ACTIVE_VIEW_ALL = 'all';
-const ACTIVE_VIEW_SUBREDDIT = 'subreddit';
 
 const initialSearchState = {
     query: '',

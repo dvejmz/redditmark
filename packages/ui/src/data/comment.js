@@ -1,8 +1,9 @@
 class Comment {
-    constructor(title, url, subreddit) {
+    constructor(title, url, subreddit, isNsfw) {
         this._body = title;
         this._url = url;
         this._subreddit = subreddit;
+        this._isNsfw = isNsfw;
     }
 
     get body() {
@@ -15,6 +16,10 @@ class Comment {
 
     get subreddit() {
         return this._subreddit;
+    }
+
+    get isNsfw() {
+        return this._isNsfw;
     }
 }
 

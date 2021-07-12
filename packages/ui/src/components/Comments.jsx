@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
    useQuery,
  } from 'react-query';
@@ -11,7 +11,9 @@ import Tab from '@material-ui/core/Tab';
 import MenuBar from './MenuBar';
 import { withStyles } from '@material-ui/core/styles';
 import ItemList from '../components/ItemList';
+import ItemListBySubreddit from '../components/ItemListBySubreddit';
 import BaseCss from '../styles/base';
+import { ACTIVE_VIEW_ALL, ACTIVE_VIEW_SUBREDDIT } from '../constants';
 
 const styles = theme => ({
     ...BaseCss,
@@ -25,6 +27,7 @@ const Comments = ({
     const {
         data: token
     } = useQuery('token', getAccessToken);
+    const [activeView, setActiveView] = useState(ACTIVE_VIEW_ALL);
     const {
         isFirstLoad,
         data = {items: []}
@@ -36,6 +39,7 @@ const Comments = ({
             staletime: Infinity,
         });
     console.log(data)
+    const listItems = data.items.map(mapToListItem);
     return (
         <div id="comments" className={classes.root}>
             <Paper>
@@ -49,15 +53,20 @@ const Comments = ({
                             <div>
                                 <MenuBar />
                                 <Box p={2}>
-                                    <Tabs value={1} centered>
-                                        <Tab value={1} label="All" />
-                                        <Tab value={2} label="By Subreddit" />
+                                    <Tabs
+                                        value={activeView}
+                                        onChange={(_, view) => setActiveView(view)}
+                                        centered
+                                    >
+                                        <Tab value={ACTIVE_VIEW_ALL} label="All" />
+                                        <Tab value={ACTIVE_VIEW_SUBREDDIT} label="By Subreddit" />
                                     </Tabs>
-                                {
-                                    <ItemList
-                                        items={data.items.map(mapToListItem)}
+                                {activeView === ACTIVE_VIEW_ALL
+                                    ? <ItemList
+                                        items={listItems}
                                         emptyListMessage={"You have no reddit comments."}
                                     />
+                                    : <ItemListBySubreddit items={listItems} />
                                 }
                                 </Box>
                             </div>
@@ -68,6 +77,6 @@ const Comments = ({
     );
 }
 
-const mapToListItem = ({ body, url, subreddit }) => ({ title: body, url, subreddit });
+const mapToListItem = ({ body, url, subreddit, isNsfw }) => ({ title: body, url, subreddit, isNsfw });
 
 export default withStyles(styles)(Comments);
