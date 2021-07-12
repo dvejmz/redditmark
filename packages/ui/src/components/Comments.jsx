@@ -15,10 +15,18 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import MenuBar from './MenuBar';
 import { fade, withStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import ItemList from '../components/ItemList';
+import BaseCss from '../styles/base';
+
+const styles = theme => ({
+    ...BaseCss,
+})
+
 const Comments = ({
+    classes,
     getAccessToken,
     fetchComments
 }) => {
@@ -29,7 +37,7 @@ const Comments = ({
     } = useQuery('comments', fetchComments);
     console.log(data)
     return (
-        <div id="comments">
+        <div id="comments" className={classes.root}>
             <Paper>
                     {isFirstLoad
                         ? (
@@ -39,13 +47,7 @@ const Comments = ({
                         )
                         : (
                             <div>
-                                <AppBar position="sticky">
-                                    <Toolbar>
-                                        <Button color="inherit" component={Link} to="/saved">Saved</Button>
-                                        <Button color="inherit" component={Link} to="/comments">Comments</Button>
-                                        <Box flexGrow={1} />
-                                    </Toolbar>
-                                </AppBar>
+                                <MenuBar />
                                 <Box p={2}>
                                     <Tabs value={1} centered>
                                         <Tab value={1} label="All" />
@@ -63,5 +65,4 @@ const Comments = ({
     );
 }
 
-export default Comments;
-
+export default withStyles(styles)(Comments);

@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import Fuse from 'fuse.js';
 import { saveAs } from 'file-saver';
 import {
-   useQuery,
-   useInfiniteQuery,
- } from 'react-query';
+    useQuery,
+    useInfiniteQuery,
+} from 'react-query';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
@@ -22,26 +22,20 @@ import { Save } from '@material-ui/icons';
 import { fade, withStyles } from '@material-ui/core/styles';
 
 import ItemList from '../components/ItemList';
+import MenuBar from './MenuBar';
 import toCsv from '../helper/csv';
 import ItemListBySubreddit from '../components/ItemListBySubreddit';
+import BaseCss from '../styles/base';
 import Error from '../components/Error';
 
 const styles = theme => ({
-    root: {
-        width: '100%',
-        maxWidth: 800,
-        margin: 'auto',
-    },
+    ...BaseCss,
     searchfield: {
         borderRadius: theme.shape.borderRadius,
         backgroundColor: fade(theme.palette.common.white, 0.70),
-            '&:hover': {
-                backgroundColor: fade(theme.palette.common.white, 1.0),
+        '&:hover': {
+            backgroundColor: fade(theme.palette.common.white, 1.0),
         },
-    },
-    toggleGroup: {
-        backgroundColor: 'white',
-        fontSize: 'smaller',
     },
 });
 
@@ -67,16 +61,16 @@ const Saved = ({
         error,
         data = { pages: [] },
     } = useInfiniteQuery(
-            'savedItems',
-            ({ pageParam = '' }) => fetchSavedItems({ token, pageParam }),
-            {
-                enabled: !!token,
-                staleTime: Infinity,
-                refetchOnReconnect: false,
-                refetchOnWindowFocus: false,
-                getNextPageParam: lastPage => lastPage.next,
-            }
-        );
+        'savedItems',
+        ({ pageParam = '' }) => fetchSavedItems({ token, pageParam }),
+        {
+            enabled: !!token,
+            staleTime: Infinity,
+            refetchOnReconnect: false,
+            refetchOnWindowFocus: false,
+            getNextPageParam: lastPage => lastPage.next,
+        }
+    );
 
     const shouldFetchNextPage = hasNextPage && !isFetchingNextPage;
     if (shouldFetchNextPage) {
@@ -150,62 +144,79 @@ const Saved = ({
     }
 
     const isFirstLoad = isIdle || isLoading;
+    const ExportButton = ({
+        isReady,
+        onClick
+    }) => (
+        <Box ml={1}>
+            {isReady
+                ? (
+                    <Tooltip title="Syncing saved items list...">
+                        <LoopIcon color="inherit" />
+                    </Tooltip>
+                ): (
+                    <Tooltip title="Export to CSV">
+                        <IconButton color="inherit" onClick={onClick}>
+                            <Save />
+                        </IconButton>
+                    </Tooltip>
+                )
+            }
+        </Box>
+    );
+
+    const Search = ({
+        query,
+        onChange
+    }) => (
+        <TextField
+            autoFocus
+            value={query}
+            variant="outlined"
+            placeholder="Search..."
+            onChange={onChange}
+            className={classes.searchfield}
+            margin="dense"
+        />
+    );
 
     return (
         <div id="saved" className={classes.root}>
             <Paper>
-                    {isFirstLoad
-                        ? (
+                {isFirstLoad
+                    ? (
+                        <Box p={2}>
+                            <Typography>Loading...</Typography>
+                        </Box>
+                    )
+                    : (
+                        <div>
+                            <MenuBar
+                                leftComponents={
+                                    <ExportButton
+                                        isReady={isFetching}
+                                        onChage={onExportButtonClick} />
+                                }
+                                rightComponents={
+                                    <Search
+                                        query={query}
+                                        onChange={({ target: { value } }) => onQueryChange(value)}
+                                    />
+                                }
+                            />
                             <Box p={2}>
-                                <Typography>Loading...</Typography>
+                                <Tabs value={activeView} onChange={(_, view) => setActiveView(view)} centered>
+                                    <Tab value={ACTIVE_VIEW_ALL} label="All" />
+                                    <Tab value={ACTIVE_VIEW_SUBREDDIT} label="By Subreddit" />
+                                </Tabs>
+                                {activeView === ACTIVE_VIEW_ALL
+                                    ? <ItemList items={displayedItems} />
+                                    : <ItemListBySubreddit items={displayedItems} />
+                                }
                             </Box>
-                        )
-                        : (
-                            <div>
-                                <AppBar position="sticky">
-                                    <Toolbar>
-                                        <Button color="inherit" component={Link} to="/saved">Saved</Button>
-                                        <Button color="inherit" component={Link} to="/comments">Comments</Button>
-                                        <Box ml={1}>
-                                            {isFetching
-                                                ? (
-                                                    <Tooltip title="Syncing saved items list...">
-                                                        <LoopIcon color="inherit" />
-                                                    </Tooltip>
-                                                ): (
-                                                    <Tooltip title="Export to CSV">
-                                                        <IconButton color="inherit" onClick={onExportButtonClick}>
-                                                            <Save />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                )
-                                            }
-                                        </Box>
-                                        <Box flexGrow={1} />
-                                        <TextField
-                                            autoFocus
-                                            value={query}
-                                            variant="outlined"
-                                            placeholder="Search..."
-                                            onChange={({ target: { value } }) => onQueryChange(value)}
-                                            className={classes.searchfield}
-                                            margin="dense"
-                                        />
-                                    </Toolbar>
-                                </AppBar>
-                                <Box p={2}>
-                                    <Tabs value={activeView} onChange={(_, view) => setActiveView(view)} centered>
-                                        <Tab value={ACTIVE_VIEW_ALL} label="All" />
-                                        <Tab value={ACTIVE_VIEW_SUBREDDIT} label="By Subreddit" />
-                                    </Tabs>
-                                    {activeView === ACTIVE_VIEW_ALL
-                                        ? <ItemList items={displayedItems} />
-                                        : <ItemListBySubreddit items={displayedItems} />
-                                    }
-                                </Box>
-                            </div>
-                        )
-                    }
+                        </div>
+                    )
+                }
             </Paper>
         </div>
     );
@@ -218,9 +229,9 @@ const ACTIVE_VIEW_ALL = 'all';
 const ACTIVE_VIEW_SUBREDDIT = 'subreddit';
 
 const initialSearchState = {
-  query: '',
-  searchActive: false,
-  searchResult: []
+    query: '',
+    searchActive: false,
+    searchResult: []
 };
 
 export default withStyles(styles)(Saved);

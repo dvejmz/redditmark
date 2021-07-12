@@ -6,7 +6,7 @@ import { CookiesProvider } from 'react-cookie';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
 import 'typeface-roboto';
-import theme from './theme';
+import theme from './styles/theme';
 import App from './App';
 import SavedItemSource from './data/savedItemSource';
 import createRequest from './api/request';
@@ -27,7 +27,7 @@ ReactDOM.render(
             <QueryClientProvider client={queryClient}>
                 <CssBaseline />
                 <App
-                    createReddit={SavedItemSource} 
+                    createReddit={SavedItemSource}
                     request={request}
                     authEndpoint={authEndpoint}
                     apiEndpoint={apiEndpoint}
