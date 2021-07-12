@@ -53,8 +53,11 @@ function App(props) {
                     exact path='/comments'
                     render={(routeProps) => (
                         <Comments
-                          {...routeProps}
-                          getAccessToken={auth.getAccessToken}
+                            {...routeProps}
+                            getAccessToken={auth.getAccessToken}
+                            createReddit={createReddit}
+                            request={request}
+                            apiEndpoint={apiEndpoint}
                         />
                     )}
                 />

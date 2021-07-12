@@ -4,20 +4,12 @@ import {
  } from 'react-query';
 
 import Paper from '@material-ui/core/Paper';
-import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
-import IconButton from '@material-ui/core/IconButton';
-import LoopIcon from '@material-ui/icons/Loop';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import MenuBar from './MenuBar';
-import { fade, withStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
 import ItemList from '../components/ItemList';
 import BaseCss from '../styles/base';
 
@@ -31,10 +23,18 @@ const Comments = ({
     fetchComments
 }) => {
     const {
-        isSuccess,
+        data: token
+    } = useQuery('token', getAccessToken);
+    const {
         isFirstLoad,
         data = {items: []}
-    } = useQuery('comments', fetchComments);
+    } = useQuery(
+        'comments',
+        () => fetchComments({ token }),
+        {
+            enabled: !!token,
+            staletime: Infinity,
+        });
     console.log(data)
     return (
         <div id="comments" className={classes.root}>

@@ -1,5 +1,4 @@
 import React, { useReducer, useState } from 'react';
-import { Link } from 'react-router-dom';
 import Fuse from 'fuse.js';
 import { saveAs } from 'file-saver';
 import {
@@ -13,11 +12,8 @@ import IconButton from '@material-ui/core/IconButton';
 import LoopIcon from '@material-ui/icons/Loop';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import { Save } from '@material-ui/icons';
 import { fade, withStyles } from '@material-ui/core/styles';
 
