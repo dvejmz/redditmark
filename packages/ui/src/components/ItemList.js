@@ -9,7 +9,7 @@ function ListItemLink(props) {
 }
 
 const ItemList = React.memo(props => {
-    const { items, inset } = props;
+    const { items, inset, emptyListMessage = "Nothing here but us chickens!" } = props;
 
     return (
         <List component="nav">
@@ -19,7 +19,7 @@ const ItemList = React.memo(props => {
                             <ListItemText inset={inset} primary={item.title} secondary={item.subreddit} />
                         </ListItemLink>
                     ))
-                : "You have no saved items. Come back when you've added some!"
+                : emptyListMessage
             }
         </List>
     );

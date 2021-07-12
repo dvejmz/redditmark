@@ -53,9 +53,12 @@ const Comments = ({
                                         <Tab value={1} label="All" />
                                         <Tab value={2} label="By Subreddit" />
                                     </Tabs>
-                            {
-                                <ItemList items={data.items} />
-                                    }
+                                {
+                                    <ItemList
+                                        items={data.items.map(mapToListItem)}
+                                        emptyListMessage={"You have no reddit comments."}
+                                    />
+                                }
                                 </Box>
                             </div>
                         )
@@ -64,5 +67,7 @@ const Comments = ({
         </div>
     );
 }
+
+const mapToListItem = ({ body, url, subreddit }) => ({ title: body, url, subreddit });
 
 export default withStyles(styles)(Comments);
