@@ -1,5 +1,5 @@
 const base = require('node-app-base')('redditmark-api');
-const SavedItemRepository = require('../data/savedItemRepository');
+const SavedItemRepository = require('./savedItemRepository');
 
 const { config, logger } = base;
 config.set({

@@ -1,5 +1,5 @@
 const base = require('node-app-base')('redditmark-api');
-const CommentRepository = require('../data/commentRepository');
+const CommentRepository = require('./commentRepository');
 
 const { config, logger } = base;
 config.set({
