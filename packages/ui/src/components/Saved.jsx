@@ -59,7 +59,7 @@ const Saved = ({
         data = { pages: [] },
     } = useInfiniteQuery(
         'savedItems',
-        ({ pageParam = '' }) => fetchSavedItems({ token, pageParam }),
+        ({ pageParam = '' }) => fetchSavedItems({ pageParam }),
         {
             enabled: !!token,
             staleTime: Infinity,

@@ -16,6 +16,7 @@ export default (savedItemSource) => {
                 next,
             };
         } catch (e) {
+            console.error("Failed to fetch saved items", e);
             throw new Error('Failed to fetch saved items');
         }
     }

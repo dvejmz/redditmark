@@ -1,22 +1,13 @@
 import React from 'react';
 
 import Saved from '../components/Saved';
-import SavedItemRepository from '../data/savedItemRepository';
 
 const SavedPage = ({
     location,
     getAccessToken,
-    createReddit,
-    request,
-    apiEndpoint,
+    savedItemRepository
 }) => {
-    const fetchSavedItems = async ({ token, pageParam = '' }) => {
-        if (!token || !token.length) {
-            throw new Error('Invalid token');
-        }
-
-        const redditClient = createReddit(request, token, apiEndpoint);
-        const savedItemRepository = SavedItemRepository(redditClient);
+    const fetchSavedItems = async ({ pageParam = '' }) => {
         const { data, next } = await savedItemRepository.getSavedItems(pageParam);
         if (!data || !data.length) {
             return {

@@ -6,18 +6,33 @@ import Saved from './containers/Saved';
 import Comments from './containers/Comments';
 import Auth from './auth';
 
+import Api from './data/api';
+import SavedItemSource from './data/savedItemSource';
+import SavedItemRepository from './data/savedItemRepository';
+
+import CommentReadSource from './data/commentReadSource';
+import CommentReadRepository from './data/commentReadRepository';
+
 function App(props) {
     const {
         cookies,
         authEndpoint,
-        apiEndpoint,
+        apiBase,
         authRedirectUrl,
         redditClientId,
         request,
-        createReddit,
     } = props;
 
     const auth = Auth(request, authEndpoint, cookies);
+
+    const authToken = cookies.get('access_token');
+    const api = Api(request, authToken, apiBase)
+
+    const savedItemSource = SavedItemSource(api);
+    const savedItemRepository = SavedItemRepository(savedItemSource);
+
+    const commentReadSource = CommentReadSource(api);
+    const commentReadRepository = CommentReadRepository(commentReadSource);
 
     const notFoundComponent = () => (
         <p>Error</p>
@@ -43,9 +58,7 @@ function App(props) {
                         <Saved
                             {...routeProps}
                             getAccessToken={auth.getAccessToken}
-                            createReddit={createReddit}
-                            request={request}
-                            apiEndpoint={apiEndpoint}
+                            savedItemRepository={savedItemRepository}
                         />
                     )}
                 />
@@ -55,9 +68,7 @@ function App(props) {
                         <Comments
                             {...routeProps}
                             getAccessToken={auth.getAccessToken}
-                            createReddit={createReddit}
-                            request={request}
-                            apiEndpoint={apiEndpoint}
+                            commentReadRepository={commentReadRepository}
                         />
                     )}
                 />

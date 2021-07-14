@@ -33,7 +33,7 @@ const Comments = ({
         data = {items: []}
     } = useQuery(
         'comments',
-        () => fetchComments({ token }),
+        () => fetchComments(),
         {
             enabled: !!token,
             staletime: Infinity,

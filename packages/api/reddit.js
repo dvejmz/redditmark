@@ -2,7 +2,7 @@ const snoowrap = require('snoowrap');
 
 module.exports = (accessToken) => {
     // 7s per 100 items = 21s avg. response time
-    // Fetch breaks as it exceed APIGW 29s timeout if too many saved items are fetched.
+    // Fetch breaks as it exceeds APIGW 29s timeout if too many saved items are fetched.
     const MAX_ITEM_COUNT = 300;
 
     const reddit = new snoowrap({

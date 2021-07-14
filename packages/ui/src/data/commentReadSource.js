@@ -1,17 +1,13 @@
-export default function (request, authToken, endpoint) {
+export default function (request) {
     async function fetchComments(afterIndex = '') {
         try {
             const response = await request.get(
-                `${endpoint}`,
-                {
-                    'Authorization': `Bearer ${authToken}`,
-                },
-                {
-                    idx: afterIndex,
-                }
+                `/comments`,
+                afterIndex,
             );
-            return response.body;
+            return response;
         } catch (e) {
+            console.error('Failed to fetch comments', e);
             return null;
         }
     }

@@ -2,7 +2,8 @@ const mapComment = require('./commentMapper');
 
 module.exports = (reddit) => {
     function isValidComment(item) {
-        return item.body && item.body.length;
+        return item.body?.length
+            && item.subreddit?.length;
     }
 
     async function getComments(afterIndex) {
