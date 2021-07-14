@@ -7,8 +7,8 @@ const CommentsPage = ({
     commentReadRepository,
     getAccessToken,
 }) => {
-    const fetchComments = async () => {
-        const { data } = await commentReadRepository.getComments();
+    const fetchComments = async ({ pageParam = '' }) => {
+        const { data, next } = await commentReadRepository.getComments(pageParam);
         if (!data || !data.length) {
             return {
                 items: [],
@@ -17,6 +17,7 @@ const CommentsPage = ({
 
         return {
             items: data,
+            next: next === '' ? undefined: next,
         };
     };
 

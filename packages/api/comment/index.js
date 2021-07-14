@@ -36,7 +36,7 @@ exports.handler = async (event) => {
     let response = null;
 
     try {
-        response = await commentRepository.getComments();
+        response = await commentRepository.getComments(fetchAfterIndex);
     } catch (e) {
         logger.error('app', { error: e.message });
         throw new Error("Unhandled error");

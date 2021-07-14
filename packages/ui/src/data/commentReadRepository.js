@@ -1,17 +1,19 @@
 import mapComment from './commentMapper';
 
 export default (commentReadSource) => {
-    async function getComments() {
+    async function getComments(afterIndex) {
         try {
-            const response = await commentReadSource.fetchComments();
-            const { data } = response;
+            const response = await commentReadSource.fetchComments(afterIndex);
+            const { data, next } = response;
             if (!data) {
                 return {
                     data: [],
+                    next: '',
                 };
             }
             return {
                 data: data.map(mapComment),
+                next,
             };
         } catch (e) {
             console.error("Failed to fetch comments:", e);

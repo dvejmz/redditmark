@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
    useQuery,
+    useInfiniteQuery,
  } from 'react-query';
 
 import Paper from '@material-ui/core/Paper';
@@ -14,8 +15,9 @@ import ItemList from '../components/ItemList';
 import ItemListBySubreddit from '../components/ItemListBySubreddit';
 import BaseCss from '../styles/base';
 import { ACTIVE_VIEW_ALL, ACTIVE_VIEW_SUBREDDIT } from '../constants';
+import Error from '../components/Error';
 
-const styles = theme => ({
+const styles = () => ({
     ...BaseCss,
 })
 
@@ -25,21 +27,43 @@ const Comments = ({
     fetchComments
 }) => {
     const {
+        isError: isTokenError,
+        error: tokenError,
         data: token
     } = useQuery('token', getAccessToken);
     const [activeView, setActiveView] = useState(ACTIVE_VIEW_ALL);
     const {
-        isFirstLoad,
-        data = {items: []}
-    } = useQuery(
+        isLoading,
+        isIdle,
+        isError,
+        hasNextPage,
+        isFetchingNextPage,
+        fetchNextPage,
+        error,
+        data = { pages: [] },
+    } = useInfiniteQuery(
         'comments',
-        () => fetchComments(),
+        ({ pageParam = '' }) => fetchComments({ pageParam }),
         {
             enabled: !!token,
             staletime: Infinity,
+            refetchOnReconnect: false,
+            refetchOnWindowFocus: false,
+            getNextPageParam: lastPage => lastPage.next,
         });
-    console.log(data)
-    const listItems = data.items.map(mapToListItem);
+    const shouldFetchNextPage = hasNextPage && !isFetchingNextPage;
+    if (shouldFetchNextPage) {
+        fetchNextPage();
+    }
+
+    const listItems = data.pages.reduce((acc, p, _) => { return [...acc, ...p.items]; }, []).map(mapToListItem);
+
+    if (isTokenError) {
+        return (<Error message={tokenError.message} />);
+    } else if (isError) {
+        return (<Error message={error.message} />);
+    }
+    const isFirstLoad = isIdle || isLoading;
     return (
         <div id="comments" className={classes.root}>
             <Paper>

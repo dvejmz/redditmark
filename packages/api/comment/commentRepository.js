@@ -18,7 +18,7 @@ module.exports = (reddit) => {
                 next: result.next,
             };
         } catch (e) {
-            throw new Error('Failed to retrieve user comments: ', e.message);
+            throw new Error(`Failed to retrieve user comments:, ${e.message}`);
         }
     }
 
