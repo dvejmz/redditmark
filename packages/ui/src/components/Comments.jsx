@@ -9,6 +9,8 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import MenuBar from './MenuBar';
 import { withStyles } from '@material-ui/core/styles';
 import ItemList from '../components/ItemList';
@@ -21,6 +23,16 @@ const styles = () => ({
     ...BaseCss,
 })
 
+const WhiteCheckbox = withStyles({
+  root: {
+    color: 'white',
+    '&$checked': {
+      color: 'white',
+    },
+  },
+  checked: {},
+})((props) => <Checkbox color="default" {...props} />);
+
 const Comments = ({
     classes,
     getAccessToken,
@@ -31,6 +43,7 @@ const Comments = ({
         error: tokenError,
         data: token
     } = useQuery('token', getAccessToken);
+    const [showOnlyNsfwComments, setShowOnlyNsfwComments] = useState(false);
     const [activeView, setActiveView] = useState(ACTIVE_VIEW_ALL);
     const {
         isLoading,
@@ -51,19 +64,26 @@ const Comments = ({
             refetchOnWindowFocus: false,
             getNextPageParam: lastPage => lastPage.next,
         });
+
     const shouldFetchNextPage = hasNextPage && !isFetchingNextPage;
     if (shouldFetchNextPage) {
         fetchNextPage();
     }
 
-    const listItems = data.pages.reduce((acc, p, _) => { return [...acc, ...p.items]; }, []).map(mapToListItem);
+    const allComments = data.pages.reduce((acc, p, _) => { return [...acc, ...p.items]; }, []).map(mapToListItem);
+    const visibleComments = showOnlyNsfwComments ? allComments.filter(c => c.isNsfw) : allComments;
 
     if (isTokenError) {
         return (<Error message={tokenError.message} />);
     } else if (isError) {
         return (<Error message={error.message} />);
     }
+
     const isFirstLoad = isIdle || isLoading;
+    const handleNsfwCheckboxChange = (event) => {
+        setShowOnlyNsfwComments(event.target.checked);
+    }
+
     return (
         <div id="comments" className={classes.root}>
             <Paper>
@@ -75,7 +95,17 @@ const Comments = ({
                         )
                         : (
                             <div>
-                                <MenuBar />
+                                <MenuBar
+                                    rightComponents={
+                                        <FormControlLabel
+                                        control={<WhiteCheckbox
+                                            checked={showOnlyNsfwComments}
+                                            onChange={handleNsfwCheckboxChange}
+                                        />}
+                                            label="NSFW Only"
+                                        />
+                                    }
+                                />
                                 <Box p={2}>
                                     <Tabs
                                         value={activeView}
@@ -87,10 +117,10 @@ const Comments = ({
                                     </Tabs>
                                 {activeView === ACTIVE_VIEW_ALL
                                     ? <ItemList
-                                        items={listItems}
+                                        items={visibleComments}
                                         emptyListMessage={"You have no reddit comments."}
                                     />
-                                    : <ItemListBySubreddit items={listItems} />
+                                    : <ItemListBySubreddit items={visibleComments} />
                                 }
                                 </Box>
                             </div>
