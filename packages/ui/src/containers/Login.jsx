@@ -47,7 +47,7 @@ function Home(props) {
                                         fullWidth
                                         variant="contained"
                                         color="primary">
-                                        Log in to view your reddit saved items
+                                        Sign in to reddit
                                     </Button>
                                 </Box>
                             </Paper>
