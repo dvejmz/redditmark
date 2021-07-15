@@ -6,7 +6,7 @@ module.exports = (accessToken) => {
     const MAX_ITEM_COUNT = 300;
 
     const reddit = new snoowrap({
-        userAgent: 'web:redditmark.apps.sgfault.com:0.2.1 (dev)',
+        userAgent: 'web:redditmark.apps.sgfault.com:0.3.1 (dev)',
         accessToken,
     });
 

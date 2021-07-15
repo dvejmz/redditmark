@@ -51,7 +51,7 @@ describe('commentRepository', () => {
     });
 
     it('should truncate comments that are too long', async () => {
-        const longMessage = "a long message, a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message";
+        const longMessage = "text".repeat(200);
         const commentReadSourceMock = {
             getComments: jest.fn().mockReturnValue({
                 items: [
@@ -79,7 +79,7 @@ describe('commentRepository', () => {
         const expected = {
             data: [
                 new Comment(
-                    'a long message, a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message,a long message...',
+                    'texttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttext...',
                     'https://reddit.com/r/samplesubreddit/32wdfd',
                     'samplesubreddit',
                     false,
