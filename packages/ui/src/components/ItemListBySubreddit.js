@@ -1,7 +1,7 @@
 import React from 'react';
 import alphaSort from 'alpha-sort';
 import List from '@material-ui/core/List';
-import SavedList from './SavedList';
+import ItemList from './ItemList';
 import CollapsibleList from './CollapsibleList';
 
 function SubredditSavedList(props) {
@@ -35,7 +35,7 @@ function SubredditSavedList(props) {
     return (
         <List component="nav">
             {Object.entries(itemsBySubreddit).map((kvp) => (
-                <CollapsibleList key={kvp[0]} component={SavedList} text={kvp[0]} children={kvp[1]} />
+                <CollapsibleList key={kvp[0]} component={ItemList} text={kvp[0]} children={kvp[1]} />
             ))}
         </List>
     );

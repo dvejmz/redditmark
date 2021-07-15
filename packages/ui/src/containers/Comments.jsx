@@ -1,14 +1,14 @@
 import React from 'react';
 
-import Saved from '../components/Saved';
+import Comments from '../components/Comments';
 
-const SavedPage = ({
+const CommentsPage = ({
     location,
+    commentReadRepository,
     getAccessToken,
-    savedItemRepository
 }) => {
-    const fetchSavedItems = async ({ pageParam = '' }) => {
-        const { data, next } = await savedItemRepository.getSavedItems(pageParam);
+    const fetchComments = async ({ pageParam = '' }) => {
+        const { data, next } = await commentReadRepository.getComments(pageParam);
         if (!data || !data.length) {
             return {
                 items: [],
@@ -19,14 +19,14 @@ const SavedPage = ({
             items: data,
             next: next === '' ? undefined: next,
         };
-    }
+    };
 
     return (
-        <Saved
+        <Comments
             getAccessToken={() => getAccessToken(location)}
-            fetchSavedItems={fetchSavedItems}
+            fetchComments={fetchComments}
         />
-    )
+    );
 };
 
-export default SavedPage;
+export default CommentsPage;

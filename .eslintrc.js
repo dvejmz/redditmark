@@ -3,9 +3,11 @@ module.exports = {
     "env": {
         "node": true,
         "es6": true,
+        "jest/globals": true
     },
+    "plugins": ["jest"],
     "parserOptions": {
-        "ecmaVersion": 2018,
+        "ecmaVersion": 2020,
         "sourceType": "module",
     },
     "rules": {

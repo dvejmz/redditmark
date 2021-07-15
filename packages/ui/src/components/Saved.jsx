@@ -2,44 +2,37 @@ import React, { useReducer, useState } from 'react';
 import Fuse from 'fuse.js';
 import { saveAs } from 'file-saver';
 import {
-   useQuery,
-   useInfiniteQuery,
- } from 'react-query';
+    useQuery,
+    useInfiniteQuery,
+} from 'react-query';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import ToggleButton from '@material-ui/lab/ToggleButton';
 import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
 import LoopIcon from '@material-ui/icons/Loop';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import { Save } from '@material-ui/icons';
 import { fade, withStyles } from '@material-ui/core/styles';
 
-import SavedList from '../components/SavedList';
+import ItemList from '../components/ItemList';
+import MenuBar from './MenuBar';
 import toCsv from '../helper/csv';
-import SubredditSavedList from '../components/SubredditSavedList';
+import ItemListBySubreddit from '../components/ItemListBySubreddit';
+import BaseCss from '../styles/base';
+import { ACTIVE_VIEW_ALL, ACTIVE_VIEW_SUBREDDIT } from '../constants';
 import Error from '../components/Error';
 
 const styles = theme => ({
-    root: {
-        width: '100%',
-        maxWidth: 800,
-        margin: 'auto',
-    },
+    ...BaseCss,
     searchfield: {
         borderRadius: theme.shape.borderRadius,
         backgroundColor: fade(theme.palette.common.white, 0.70),
-            '&:hover': {
-                backgroundColor: fade(theme.palette.common.white, 1.0),
+        '&:hover': {
+            backgroundColor: fade(theme.palette.common.white, 1.0),
         },
-    },
-    toggleGroup: {
-        backgroundColor: 'white',
-        fontSize: 'smaller',
     },
 });
 
@@ -65,16 +58,16 @@ const Saved = ({
         error,
         data = { pages: [] },
     } = useInfiniteQuery(
-            'savedItems',
-            ({ pageParam = '' }) => fetchSavedItems({ token, pageParam }),
-            {
-                enabled: !!token,
-                staleTime: Infinity,
-                refetchOnReconnect: false,
-                refetchOnWindowFocus: false,
-                getNextPageParam: lastPage => lastPage.next,
-            }
-        );
+        'savedItems',
+        ({ pageParam = '' }) => fetchSavedItems({ pageParam }),
+        {
+            enabled: !!token,
+            staleTime: Infinity,
+            refetchOnReconnect: false,
+            refetchOnWindowFocus: false,
+            getNextPageParam: lastPage => lastPage.next,
+        }
+    );
 
     const shouldFetchNextPage = hasNextPage && !isFetchingNextPage;
     if (shouldFetchNextPage) {
@@ -148,60 +141,79 @@ const Saved = ({
     }
 
     const isFirstLoad = isIdle || isLoading;
+    const ExportButton = ({
+        isReady,
+        onClick
+    }) => (
+        <Box ml={1}>
+            {isReady
+                ? (
+                    <Tooltip title="Syncing saved items list...">
+                        <LoopIcon color="inherit" />
+                    </Tooltip>
+                ): (
+                    <Tooltip title="Export to CSV">
+                        <IconButton color="inherit" onClick={onClick}>
+                            <Save />
+                        </IconButton>
+                    </Tooltip>
+                )
+            }
+        </Box>
+    );
+
+    const Search = ({
+        query,
+        onChange
+    }) => (
+        <TextField
+            autoFocus
+            value={query}
+            variant="outlined"
+            placeholder="Search..."
+            onChange={onChange}
+            className={classes.searchfield}
+            margin="dense"
+        />
+    );
 
     return (
         <div id="saved" className={classes.root}>
             <Paper>
-                    {isFirstLoad
-                        ? (
+                {isFirstLoad
+                    ? (
+                        <Box p={2}>
+                            <Typography>Loading...</Typography>
+                        </Box>
+                    )
+                    : (
+                        <div>
+                            <MenuBar
+                                leftComponents={
+                                    <ExportButton
+                                        isReady={isFetching}
+                                        onClick={onExportButtonClick} />
+                                }
+                                rightComponents={
+                                    <Search
+                                        query={query}
+                                        onChange={({ target: { value } }) => onQueryChange(value)}
+                                    />
+                                }
+                            />
                             <Box p={2}>
-                                <Typography>Loading...</Typography>
+                                <Tabs value={activeView} onChange={(_, view) => setActiveView(view)} centered>
+                                    <Tab value={ACTIVE_VIEW_ALL} label="All" />
+                                    <Tab value={ACTIVE_VIEW_SUBREDDIT} label="By Subreddit" />
+                                </Tabs>
+                                {activeView === ACTIVE_VIEW_ALL
+                                    ? <ItemList items={displayedItems} />
+                                    : <ItemListBySubreddit items={displayedItems} />
+                                }
                             </Box>
-                        )
-                        : (
-                            <div>
-                                <AppBar position="sticky">
-                                    <Toolbar>
-                                        <ToggleButtonGroup className={classes.toggleGroup} value={activeView} exclusive onChange={(_, view) => setActiveView(view)}>
-                                            <ToggleButton value={ACTIVE_VIEW_ALL}>All</ToggleButton>
-                                            <ToggleButton value={ACTIVE_VIEW_SUBREDDIT}>Subreddit</ToggleButton>
-                                        </ToggleButtonGroup>
-                                        <Box ml={1}>
-                                            {isFetching
-                                                ? (
-                                                    <Tooltip title="Syncing saved items list...">
-                                                        <LoopIcon color="inherit" />
-                                                    </Tooltip>
-                                                ): (
-                                                    <Tooltip title="Export to CSV">
-                                                        <IconButton color="inherit" onClick={onExportButtonClick}>
-                                                            <Save />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                )
-                                            }
-                                        </Box>
-                                        <Box flexGrow={1} />
-                                        <TextField
-                                            autoFocus
-                                            value={query}
-                                            variant="outlined"
-                                            placeholder="Search..."
-                                            onChange={({ target: { value } }) => onQueryChange(value)}
-                                            className={classes.searchfield}
-                                            margin="dense"
-                                        />
-                                    </Toolbar>
-                                </AppBar>
-                                <Box p={2}>
-                                    {activeView === ACTIVE_VIEW_ALL
-                                        ? <SavedList items={displayedItems} />
-                                        : <SubredditSavedList items={displayedItems} />
-                                    }
-                                </Box>
-                            </div>
-                        )
-                    }
+                        </div>
+                    )
+                }
             </Paper>
         </div>
     );
@@ -210,13 +222,10 @@ const Saved = ({
 const UPDATE_QUERY = 'UPDATE_QUERY';
 const PERFORM_SEARCH = 'PERFORM_SEARCH';
 
-const ACTIVE_VIEW_ALL = 'all';
-const ACTIVE_VIEW_SUBREDDIT = 'subreddit';
-
 const initialSearchState = {
-  query: '',
-  searchActive: false,
-  searchResult: []
+    query: '',
+    searchActive: false,
+    searchResult: []
 };
 
 export default withStyles(styles)(Saved);

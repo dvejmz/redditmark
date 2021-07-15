@@ -35,8 +35,11 @@ export class RedditmarkStack extends cdk.Stack {
         this, `/redditmark/${stage}/site-url`);
     const apiClientCallbackUrl = `${siteUrl}/saved`;
 
-    const apiLambda = new NodejsFunction(this, "api", {
-      entry: `${__dirname}/../../api/index.js`,
+    const createApiLambda = ({
+      handlerPath,
+      name
+    }: { handlerPath: string, name: string }) => (new NodejsFunction(this, `api-${name}`, {
+      entry: handlerPath,
       timeout: cdk.Duration.seconds(60),
       environment: {
         DEBUG_ENABLED: debugEnabled.toString(),
@@ -47,6 +50,15 @@ export class RedditmarkStack extends cdk.Stack {
         minify: true,
         sourceMap: true,
       } : {},
+    }))
+
+    const savedApiLambda = createApiLambda({
+      name: 'saved',
+      handlerPath: `${__dirname}/../../api/saved/index.js`,
+    });
+    const commentApiLambda = createApiLambda({
+      name: 'comment',
+      handlerPath: `${__dirname}/../../api/comment/index.js`,
     });
 
     const authLambda = new NodejsFunction(this, "auth", {
@@ -75,7 +87,14 @@ export class RedditmarkStack extends cdk.Stack {
       path: "/saved",
       methods: [ HttpMethod.GET ],
       integration: new apigwintegrations.LambdaProxyIntegration({
-        handler: apiLambda,
+        handler: savedApiLambda,
+      })
+    });
+    apiGW.addRoutes({
+      path: "/comments",
+      methods: [ HttpMethod.GET ],
+      integration: new apigwintegrations.LambdaProxyIntegration({
+        handler: commentApiLambda,
       })
     });
     apiGW.addRoutes({

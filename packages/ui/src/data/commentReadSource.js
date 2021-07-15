@@ -1,18 +1,18 @@
 export default function (request) {
-    async function getSavedItems(afterIndex = '') {
+    async function fetchComments(afterIndex = '') {
         try {
             const response = await request.get(
-                `/saved`,
+                `/comments`,
                 afterIndex,
             );
             return response;
         } catch (e) {
-            console.error('Failed to fetch saved items', e);
+            console.error('Failed to fetch comments', e);
             return null;
         }
     }
 
     return {
-        getSavedItems,
+        fetchComments,
     };
 };
