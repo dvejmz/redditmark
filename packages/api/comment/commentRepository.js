@@ -18,7 +18,7 @@ module.exports = (reddit) => {
             body: shouldEllipsise(comment.body)
                 ? `${comment.body.slice(0, MAX_COMMENT_LENGTH)}...`
                 : comment.body,
-        }
+        };
     }
 
     async function getComments(afterIndex) {

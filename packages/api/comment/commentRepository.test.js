@@ -27,7 +27,7 @@ describe('commentRepository', () => {
                 ],
                 next: ''
             })
-        }
+        };
         commentRepository = CommentRepository(commentReadSourceMock);
         const expected = {
             data: [
@@ -74,7 +74,7 @@ describe('commentRepository', () => {
                 ],
                 next: ''
             })
-        }
+        };
         commentRepository = CommentRepository(commentReadSourceMock);
         const expected = {
             data: [
