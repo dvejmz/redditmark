@@ -192,7 +192,7 @@ const Saved = ({
                                 leftComponents={
                                     <ExportButton
                                         isReady={isFetching}
-                                        onChage={onExportButtonClick} />
+                                        onClick={onExportButtonClick} />
                                 }
                                 rightComponents={
                                     <Search
